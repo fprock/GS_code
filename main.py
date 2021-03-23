@@ -2,6 +2,41 @@
 from classes import CompHumClass
 import time
 
+#pseudo code for validation
+
+#   if inputArr(0) == start_char1
+#         if inputArr(1) == start_char2 {
+#             if inputArr(2) == msg_classX {
+#                 msg.class = msg_classX
+#                 msg.payloadLength = inputArr(3)
+#                 msg.payload = inputArr(4:(msg.payloadLength - 1))
+#                 msg.CK_A = inputArr(payloadOffset + msg.payloadLength)
+#                 msg.CK_B = inputArr(payloadOffset + msg.payloadLength + 1)
+#                 msg.valid = fletchersAlgorithm(msg) //if recieved CK_A and CK_B do not match calculated values
+#                                                     //then return false
+#             }
+#             elif inputArr(2) == msg_classY {
+#                 msg.class = msg_classY
+#                 ~
+#                 ~
+#                 ~
+#             }
+#             //more classes
+#             ~
+#             ~
+#             ~
+#             else {
+#                 msg.valid = false
+#             }
+#         else {
+#             msg.valid = false
+#         }
+#     else {
+#         msg.valid = false
+#     }
+
+
+
 debug = True
 
 def fakeserial(inputfile):
