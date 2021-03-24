@@ -1,8 +1,8 @@
-#import serial
+import serial
 from classes import CompHumClass
 import time
 
-#pseudo code for validation
+# pseudo code for validation
 
 #   if inputArr(0) == start_char1
 #         if inputArr(1) == start_char2 {
@@ -36,8 +36,8 @@ import time
 #     }
 
 
-
 debug = True
+
 
 def fakeserial(inputfile):
     return bytes.fromhex(inputfile.readline())
@@ -58,6 +58,11 @@ rawHumFile = open(rawHumFilePath, "w")
 compHumFile = open(compHumFilePath, "w")
 
 firstLine = False
+
+ser = serial.Serial('/dev/ttyUSB0', 9600)
+ser.flushInput()
+ser.flushOutput()
+
 if debug:
     baroMsgsFilePath = "baroMessages.dat"
     baroMsgsFile = open(baroMsgsFilePath, "r")
@@ -65,6 +70,7 @@ else:
     ser = serial.Serial('/dev/ttyUSB0', 9600)
     ser.flushInput()
     ser.flushOutput()
+
 while True:
     if debug:
         data_raw = fakeserial(baroMsgsFile)
