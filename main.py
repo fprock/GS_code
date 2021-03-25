@@ -4,7 +4,6 @@ from classes import CompHumClass
 import time
 import argparse
 
-
 # pseudo code for validation
 
 #   if inputArr(0) == start_char1
@@ -38,9 +37,6 @@ import argparse
 #         msg.valid = false
 #     }
 
-def fakeSerial(inputfile):
-    return bytes.fromhex(inputfile.readline())
-
 
 rawPresFilePath = "logs/RawPresLog.txt"
 compPresFilePath = "logs/CompPresLog.txt"
@@ -56,14 +52,14 @@ compTempFile = open(compTempFilePath, "w")
 rawHumFile = open(rawHumFilePath, "w")
 compHumFile = open(compHumFilePath, "w")
 
+print("*BEGINNING PROGRAM*\n\n")
 parser = argparse.ArgumentParser(description="Parse bool")
-parser.add_argument("-d", default=False, action="store_true")
+parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
 
+
 def main():
-
-
-    if parser.d:
+    if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
         baroMsgsFilePath = "/baroMessages.dat"
         baroMsgsFile = open(baroMsgsFilePath, "r")
@@ -73,11 +69,13 @@ def main():
         ser.flushOutput()
 
     while True:
-        if
+        if args.d:
+            print("READING FROM FILE\n")
             data_raw = fakeSerial(baroMsgsFile)
             if not data_raw:
                 break
         else:
+            print("READING FROM SERIAL")
             data_raw = str(ser.readline())
         print(data_raw)
         #
@@ -98,12 +96,16 @@ def main():
         #     rawHumFile.write(CompHumClass.HexValue_to_float(dataLine[4][2:]) + '\n')
         #     compHumFile.write(CompHumClass.HexValue_to_float(dataLine[5][2:8]) + '\n')
 
-    if debug:
+    if args.d:
         baroMsgsFile.close()
 
-    # rawPresFile.close()
-    # compPresFile.close()
-    # rawTempFile.close()
-    # compTempFile.close()
-    # rawHumFile.close()
-    # compHumFile.close()
+
+main()
+# rawPresFile.close()
+# compPresFile.close()
+# rawTempFile.close()
+# compTempFile.close()
+# rawHumFile.close()
+# compHumFile.close()
+# def fakeSerial(inputfile):
+#    return bytes.fromhex(inputfile.readline())
