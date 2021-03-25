@@ -57,7 +57,7 @@ def main():
             data_raw = str(ser.readline())
 
         data_raw = data_raw.strip()
-        if data_raw == "BB":
+        if data_raw == "BB" and not firstFlag and not baroFlag and not messageFlag:
             print("First start flag received")
             firstFlag = True
             baroFlag = False
@@ -65,7 +65,7 @@ def main():
             payLoadLenFlag = False
             payLoadLen = 0
             payLoadCount = 0
-        elif data_raw == "AE" and firstFlag:
+        elif data_raw == "AE" and firstFlag and not secondFlag and not baroFlag and not messageFlag:
             print("Second start flag received")
             secondFlag = True
             firstFlag = False
@@ -87,7 +87,6 @@ def main():
         elif baroFlag:
             if payLoadLenFlag:
                 convertingData = data_raw + convertingData
-                #print(convertingData)
                 dataCount = dataCount + 1
                 if dataCount == 4:
                     print("Attempting to convert: " + convertingData)
@@ -99,6 +98,13 @@ def main():
                 payLoadCount = payLoadCount + 1
                 if payLoadCount == payLoadLen:
                     print("END OF PAYLOAD")
+                    payLoadCount = 0
+                    firstFlag = False
+                    secondFlag = False
+                    baroFlag = False
+                    messageFlag = False
+                    payLoadLenFlag = False
+                    payLoadLen = 0
                     payLoadCount = 0
             else:
                 payLoadLenFlag = True
