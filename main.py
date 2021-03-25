@@ -4,6 +4,11 @@ from classes import CompHumClass
 import time
 import argparse
 
+
+def fakeSerial(inputFile):
+    #return bytes.fromhex(inputFile.readline())
+    return inputFile.readline()
+
 # pseudo code for validation
 
 #   if inputArr(0) == start_char1
@@ -36,8 +41,6 @@ import argparse
 #     else {
 #         msg.valid = false
 #     }
-
-
 rawPresFilePath = "logs/RawPresLog.txt"
 compPresFilePath = "logs/CompPresLog.txt"
 rawTempFilePath = "logs/RawTempLog.txt"
@@ -59,53 +62,49 @@ args = parser.parse_args()
 
 
 def main():
+    firstFlag = False
+    secondFlag = False
+    global baroMsgsFile
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
-        baroMsgsFilePath = "/baroMessages.dat"
+        baroMsgsFilePath = "baroMessages.dat"
         baroMsgsFile = open(baroMsgsFilePath, "r")
     else:
-        ser = serial.Serial('/dev/ttyUSB0', 9600)
+        ser = Serial('/dev/ttyUSB0', 9600)
         ser.flushInput()
         ser.flushOutput()
-
+    print("READING FROM FILE\n")
     while True:
+
         if args.d:
-            print("READING FROM FILE\n")
             data_raw = fakeSerial(baroMsgsFile)
             if not data_raw:
                 break
         else:
             print("READING FROM SERIAL")
             data_raw = str(ser.readline())
-        print(data_raw)
-        #
-        # dataLine = data_raw.split(', ')
-        # if not firstLine:
-        #     rawPresFile.write(dataLine[0] + '\n')
-        #     compPresFile.write(dataLine[1] + '\n')
-        #     rawTempFile.write(dataLine[2] + '\n')
-        #     compTempFile.write(dataLine[3] + '\n')
-        #     rawHumFile.write(dataLine[4] + '\n')
-        #     compHumFile.write(dataLine[5] + '\n')
-        #     firstLine = True
-        # else:
-        #     rawPresFile.write(CompHumClass.HexValue_to_float(dataLine[0][4:]) + '\n')
-        #     compPresFile.write(CompHumClass.HexValue_to_float(dataLine[1][2:]) + '\n')
-        #     rawTempFile.write(CompHumClass.HexValue_to_float(dataLine[2][2:]) + '\n')
-        #     compTempFile.write(CompHumClass.HexValue_to_float(dataLine[3][2:]) + '\n')
-        #     rawHumFile.write(CompHumClass.HexValue_to_float(dataLine[4][2:]) + '\n')
-        #     compHumFile.write(CompHumClass.HexValue_to_float(dataLine[5][2:8]) + '\n')
+        data_raw = data_raw.strip()
+        if data_raw == "BB":
+            print("First barometer flag received")
+            firstFlag = True
+        elif data_raw == "AE" and firstFlag:
+            print("Second barometer flag received")
+            secondFlag = True
+        elif secondFlag:
+            print(data_raw)
+        else:
+            print("ERROR: missing starting flag, discarding incoming data and waiting till next start flags")
+            firstFlag, secondFlag = False
 
     if args.d:
         baroMsgsFile.close()
 
+    rawPresFile.close()
+    compPresFile.close()
+    rawTempFile.close()
+    compTempFile.close()
+    rawHumFile.close()
+    compHumFile.close()
+
 
 main()
-# rawPresFile.close()
-# compPresFile.close()
-# rawTempFile.close()
-# compTempFile.close()
-# rawHumFile.close()
-# compHumFile.close()
-# def fakeSerial(inputfile):
-#    return bytes.fromhex(inputfile.readline())
