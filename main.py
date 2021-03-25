@@ -3,11 +3,13 @@ import sys
 from classes import CompHumClass
 import time
 import argparse
+import struct
 
 
 def fakeSerial(inputFile):
-    #return bytes.fromhex(inputFile.readline())
+    # return bytes.fromhex(inputFile.readline())
     return inputFile.readline()
+
 
 # pseudo code for validation
 
@@ -64,6 +66,12 @@ args = parser.parse_args()
 def main():
     firstFlag = False
     secondFlag = False
+    baroFlag = False
+    messageFlag = False
+    payLoadLenFlag = False
+    payLoadLen = 0
+    i = 0
+
     global baroMsgsFile
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
@@ -75,7 +83,6 @@ def main():
         ser.flushOutput()
     print("READING FROM FILE\n")
     while True:
-
         if args.d:
             data_raw = fakeSerial(baroMsgsFile)
             if not data_raw:
@@ -83,18 +90,53 @@ def main():
         else:
             print("READING FROM SERIAL")
             data_raw = str(ser.readline())
+
         data_raw = data_raw.strip()
         if data_raw == "BB":
-            print("First barometer flag received")
+            print("First start flag received")
             firstFlag = True
+            baroFlag = False
+            messageFlag = False
+            payLoadLenFlag = False
+            payLoadLen = 0
+            i = 0
         elif data_raw == "AE" and firstFlag:
-            print("Second barometer flag received")
+            print("Second start flag received")
             secondFlag = True
+            firstFlag = False
         elif secondFlag:
-            print(data_raw)
+            if data_raw == "00":
+                print("Message Class received")
+                messageFlag = True
+                firstFlag = False
+                secondFlag = False
+            elif data_raw == "01":
+                print("Barometer Class received")
+                baroFlag = True
+                firstFlag = False
+                secondFlag = False
+            else:
+                print("Invalid class received discarding data until next start")
+                firstFlag = False
+                secondFlag = False
+        elif baroFlag:
+            if payLoadLenFlag:
+                print(data_raw)
+                i = i + 1
+                if i == payLoadLen:
+                    print("END OF PAYLOAD")
+                    i = 0
+
+            else:
+                payLoadLenFlag = True
+                payLoadLen = int(data_raw, 16)
+                print("PayLoad length is " + str(payLoadLen) + " bytes")
+        elif messageFlag:
+            print("something")
         else:
             print("ERROR: missing starting flag, discarding incoming data and waiting till next start flags")
-            firstFlag, secondFlag = False
+            firstFlag = False
+            secondFlag = False
 
     if args.d:
         baroMsgsFile.close()
