@@ -5,50 +5,16 @@ import time
 import argparse
 import struct
 
-
 def fakeSerial(inputFile):
-    # return bytes.fromhex(inputFile.readline())
     return inputFile.readline()
 
-
-# pseudo code for validation
-
-#   if inputArr(0) == start_char1
-#         if inputArr(1) == start_char2 {
-#             if inputArr(2) == msg_classX {
-#                 msg.class = msg_classX
-#                 msg.payloadLength = inputArr(3)
-#                 msg.payload = inputArr(4:(msg.payloadLength - 1))
-#                 msg.CK_A = inputArr(payloadOffset + msg.payloadLength)
-#                 msg.CK_B = inputArr(payloadOffset + msg.payloadLength + 1)
-#                 msg.valid = fletchersAlgorithm(msg) //if recieved CK_A and CK_B do not match calculated values
-#                                                     //then return false
-#             }
-#             elif inputArr(2) == msg_classY {
-#                 msg.class = msg_classY
-#                 ~
-#                 ~
-#                 ~
-#             }
-#             //more classes
-#             ~
-#             ~
-#             ~
-#             else {
-#                 msg.valid = false
-#             }
-#         else {
-#             msg.valid = false
-#         }
-#     else {
-#         msg.valid = false
-#     }
 rawPresFilePath = "logs/RawPresLog.txt"
 compPresFilePath = "logs/CompPresLog.txt"
 rawTempFilePath = "logs/RawTempLog.txt"
 compTempFilePath = "logs/CompTempLog.txt"
 rawHumFilePath = "logs/RawHumLog.txt"
 compHumFilePath = "logs/CompTempLog.txt"
+baroMsgsFilePath = "baroMessages.dat"
 
 rawPresFile = open(rawPresFilePath, "w")
 compPresFile = open(compPresFilePath, "w")
@@ -70,12 +36,11 @@ def main():
     messageFlag = False
     payLoadLenFlag = False
     payLoadLen = 0
-    i = 0
-
-    global baroMsgsFile
+    payLoadCount = 0
+    dataCount = 0
+    convertingData = ""
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
-        baroMsgsFilePath = "baroMessages.dat"
         baroMsgsFile = open(baroMsgsFilePath, "r")
     else:
         ser = Serial('/dev/ttyUSB0', 9600)
@@ -99,7 +64,7 @@ def main():
             messageFlag = False
             payLoadLenFlag = False
             payLoadLen = 0
-            i = 0
+            payLoadCount = 0
         elif data_raw == "AE" and firstFlag:
             print("Second start flag received")
             secondFlag = True
@@ -121,18 +86,36 @@ def main():
                 secondFlag = False
         elif baroFlag:
             if payLoadLenFlag:
-                print(data_raw)
-                i = i + 1
-                if i == payLoadLen:
+                convertingData = data_raw + convertingData
+                #print(convertingData)
+                dataCount = dataCount + 1
+                if dataCount == 4:
+                    print("Attempting to convert: " + convertingData)
+                    data = struct.unpack('!f', bytes.fromhex(convertingData))[0]
+                    print(data)
+                    dataCount = 0
+                    data = ""
+                    convertingData = ""
+                payLoadCount = payLoadCount + 1
+                if payLoadCount == payLoadLen:
                     print("END OF PAYLOAD")
-                    i = 0
-
+                    payLoadCount = 0
             else:
                 payLoadLenFlag = True
                 payLoadLen = int(data_raw, 16)
-                print("PayLoad length is " + str(payLoadLen) + " bytes")
+                print("Barometer payload length is " + str(payLoadLen) + " bytes")
         elif messageFlag:
-            print("something")
+            if payLoadLenFlag:
+                #message data conversion
+
+                payLoadCount = payLoadCount + 1
+                if payLoadCount == payLoadLen:
+                    print("END OF PAYLOAD")
+                    payLoadCount = 0
+            else:
+                payLoadLenFlag = True
+                payLoadLen = int(data_raw, 16)
+                print("Message payload length is " + str(payLoadLen) + " bytes")
         else:
             print("ERROR: missing starting flag, discarding incoming data and waiting till next start flags")
             firstFlag = False
