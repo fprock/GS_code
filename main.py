@@ -3,7 +3,12 @@ import sys
 import time
 import argparse
 import struct
+from datetime import datetime
 
+def getTimeStamp():
+    dateTimeObj = datetime.now()
+    timestampStr = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
+    return "Current Timestamp : " + timestampStr
 
 def fakeSerial(inputFile):
     return inputFile.read(2)
@@ -71,6 +76,7 @@ def logData(dataType_count, data):
 
 
 print("*BEGINNING PROGRAM*\n\n")
+
 dataFile.write("*BEGINNING PROGRAM*\n\n")
 parser = argparse.ArgumentParser(description="Parse bool")
 parser.add_argument("-d", '-development', default=False, action="store_true")
@@ -86,6 +92,7 @@ def main():
     dataCount = 0
     dataType_count = 0
     convertingData = ""
+    baroChecksumCount = 0
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
         dataFile.write("*ENTERING DEVELOPMENT MODE*\n")
@@ -109,8 +116,10 @@ def main():
 
         data_raw = data_raw.strip()
         if data_raw == "BB" and state == "initial":  # First starting byte
-            print("\nFirst FPROCK start flag received")
-            dataFile.write("\nFirst FPROCK start flag received\n")
+            print(getTimeStamp())
+            dataFile.write("\n" + getTimeStamp() + "\n")
+            print("First FPROCK start flag received")
+            dataFile.write("First FPROCK start flag received\n")
             state = "baroFirst"
             payLoadLen = 0
             payLoadCount = 0
@@ -148,7 +157,7 @@ def main():
                     dataFile.write("END OF PAYLOAD\n")
                     state = "barochecksum"
                     baro_state = "payloadLength"
-                    i = 0
+                    baroChecksumCount = 0
                     payLoadCount = 0
                     payLoadLen = 0
                     payLoadCount = 0
@@ -175,16 +184,17 @@ def main():
                 dataFile.write("Message payload length is " + str(payLoadLen) + " bytes\n")
         elif state == "barochecksum":
 
-            i = i + 1
-            print("Checksum #" + str(i) + ": " + data_raw)
-            if i == 2:
+            baroChecksumCount = baroChecksumCount + 1
+            print("Checksum #" + str(baroChecksumCount) + ": " + data_raw)
+            if baroChecksumCount == 2:
                 print("\n")
                 state = "initial"
         else:
             print(
                 f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
-            dataFile.write("ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next "
-                           "start flags\n")
+            dataFile.write(
+                "ERROR: missing starting flag, discarding incoming data(" + data_raw + ") and waiting till next "
+                                                                                       "start flags\n")
 
     if args.d:
         baroMsgsFile.close()
@@ -195,6 +205,7 @@ def main():
     compTempFile.close()
     rawHumFile.close()
     compHumFile.close()
+    dataFile.close()
 
 
 main()
