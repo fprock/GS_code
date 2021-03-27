@@ -4,8 +4,10 @@ import time
 import argparse
 import struct
 from datetime import datetime
+from GUI import *
 from readUBX import *
 import pprint
+import threading
 
 
 def getTimeStamp():
@@ -104,6 +106,9 @@ parser = argparse.ArgumentParser(description="Parse bool")
 parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
 
+GUIThread = threading.Thread(target=GUI_GO)
+GUIThread.start()
+
 
 def main():
     state = "initial"
@@ -120,6 +125,7 @@ def main():
     gps_bytes = []
     gpsByte_string = ""
     baroChecksum = []
+
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
         dataFile.write("*ENTERING DEVELOPMENT MODE*\n")
@@ -262,4 +268,8 @@ def main():
     dataFile.close()
 
 
-main()
+try:
+    main()
+except KeyboardInterrupt:
+    GUIThread.join()
+    sys.exit(0)
