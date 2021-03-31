@@ -1,14 +1,16 @@
-# import serial
+import serial
 import sys
 import time
 import argparse
 import struct
 from datetime import datetime
-from GUI import *
+# from GUI import GUI_GO
 from readUBX import *
 import pprint
 import threading
 
+
+# import importSerial
 
 def getTimeStamp():
     dateTimeObj = datetime.now()
@@ -45,24 +47,26 @@ compTempFilePath = "logs/CompTempLog.txt"
 rawHumFilePath = "logs/RawHumLog.txt"
 compHumFilePath = "logs/CompHumLog.txt"
 compAltFilePath = "logs/CompAltLog.txt"
-baroMsgsFilePath = "Testdata.txt"
+baroMsgsFilePath = "HexFile.txt"
 dataLogFilePath = "logs/data.log"
+byteLogFilePath = "logs/byteLog.txt"
 
 rawPresFile = open(rawPresFilePath, "w")
 rawPresFile.write("Received Raw Pressure Values\n")
 compPresFile = open(compPresFilePath, "w")
-compPresFile.write("Received calculated Pressure Values\n")
+compPresFile.write("0\n")
 rawTempFile = open(rawTempFilePath, "w")
 rawTempFile.write("Received Raw Temperature Values\n")
 compTempFile = open(compTempFilePath, "w")
-compTempFile.write("Received Raw Temperature Values\n")
+compTempFile.write("0\n")
 rawHumFile = open(rawHumFilePath, "w")
 rawHumFile.write("Received Raw Humidity Values\n")
 compHumFile = open(compHumFilePath, "w")
-compHumFile.write("Received calculated Humidity Values\n")
+compHumFile.write("0\n")
 compAltFile = open(compAltFilePath, "w")
-compAltFile.write("Received calculated Altitude Values\n")
+compAltFile.write("0\n")
 dataFile = open(dataLogFilePath, "w")
+byteFile = open(byteLogFilePath, "w")
 
 
 def logData(dataType_count, data):
@@ -96,7 +100,7 @@ def logData(dataType_count, data):
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
     else:
         print("IDK homie this shouldnt happen")
-        print(str(dataType_count))
+        # print(str(dataType_count))
 
 
 print("*BEGINNING PROGRAM*\n\n")
@@ -105,12 +109,13 @@ dataFile.write("*BEGINNING PROGRAM*\n\n")
 parser = argparse.ArgumentParser(description="Parse bool")
 parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
-
-GUIThread = threading.Thread(target=GUI_GO)
-GUIThread.start()
-
+if not args.d:
+    ser = serial.Serial('/dev/ttyUSB0', 9600)
 
 def main():
+    # GUIThread = threading.Thread(target=importSerial)
+    # GUIThread.start()
+
     state = "initial"
     baro_state = "payloadLength"
     payLoadLenFlag = False
@@ -133,19 +138,19 @@ def main():
         print("READING FROM FILE\n")
         dataFile.write("READING FROM FILE\n")
     else:
-        ser = Serial('/dev/ttyUSB0', 9600)
-        ser.flushInput()
-        ser.flushOutput()
+
         print("READING FROM SERIAL\n")
         dataFile.write("READING FROM SERIAL\n")
 
     while True:
+        data_raw = ""
         if args.d:
             data_raw = fakeSerial(baroMsgsFile)
             if not data_raw:
                 break
         else:
-            data_raw = str(ser.readline())
+            data_raw = ser.read(1)
+            print(str(data_raw))
 
         if data_raw == "BB" and state == "initial":  # First starting byte
             print(getTimeStamp())
@@ -228,8 +233,7 @@ def main():
                 data = []
                 baroBytes = []
                 baroChecksum = []
-
-        elif state == "initial" and data_raw == "B5":
+        elif state == "initial" and data_raw == "B5----":
             print("Intercepting GPS data")
             gpsByte_string = gpsByte_string + data_raw
             gps_bytes.append(bytes(data_raw, 'UTF-8'))
@@ -253,8 +257,8 @@ def main():
             print(
                 f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
             dataFile.write(
-                "ERROR: missing starting flag, discarding incoming data(" + data_raw + ") and waiting till next "
-                                                                                       "start flags\n")
+                "ERROR: missing starting flag, discarding incoming data(" + str(data_raw) + ") and waiting till next "
+                                                                                            "start flags\n")
 
     if args.d:
         baroMsgsFile.close()
@@ -271,5 +275,5 @@ def main():
 try:
     main()
 except KeyboardInterrupt:
-    GUIThread.join()
+    # GUIThread.join()
     sys.exit(0)
