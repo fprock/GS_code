@@ -16,16 +16,18 @@ byteFile = open("ByteFile.txt", 'w')
 hexFile = open("HexFile.txt", 'w') 
 
 while True:
-    byte = ser.read(1)
-    byteFile.write(str(byte) + '\n')
-    hex = str(byte)[4:6]
-    if hex == "":
-        continue
-    elif hex == "\n":
-        continue 
-    elif hex == "'":
-        continue
-    hex = hex.upper()
-    print(hex)
-    hexFile.write(hex)
-        
+    while ser.in_waiting:
+        byte = ser.read(1)
+        byteFile.write(str(byte) + '\n')
+        hex = str(byte)[4:6]
+        if hex == "":
+            continue
+        elif hex == "\n":
+            continue
+        elif hex == "'":
+            continue
+        hex = hex.upper()
+        print(hex)
+        hexFile.write(hex)
+    if not ser.in_waiting:
+        print("No serial messages")
