@@ -43,7 +43,7 @@ compPresFilePath = "logs/CompPresLog.txt"
 rawTempFilePath = "logs/RawTempLog.txt"
 compTempFilePath = "logs/CompTempLog.txt"
 rawHumFilePath = "logs/RawHumLog.txt"
-compHumFilePath = "logs/CompTempLog.txt"
+compHumFilePath = "logs/CompHumLog.txt"
 compAltFilePath = "logs/CompAltLog.txt"
 baroMsgsFilePath = "Testdata.txt"
 dataLogFilePath = "logs/data.log"
@@ -80,19 +80,19 @@ def logData(dataType_count, data):
         dataFile.write("Raw Humidity: " + str(data[2]) + "\n")
     elif dataType_count == 3:
         print("Calculated Pressure(Pa): " + str(data[3]))
-        compPresFile.write("Calculated Pressure(Pa): " + str(data[3]) + "\n")
+        compPresFile.write(str(data[3]) + "\n")
         dataFile.write("Calculated Pressure(Pa): " + str(data[3]) + "\n")
     elif dataType_count == 4:
         print("Calculated Temperature(C): " + str(data[4]))
-        compTempFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
+        compTempFile.write(str(data[4]) + "\n")
         dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
     elif dataType_count == 5:
         print("Calculated Humidity(%): " + str(data[5]))
-        compHumFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
+        compHumFile.write(str(data[5]) + "\n")
         dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
     elif dataType_count == 6:
         print("Calculated Altitude: " + str(data[6]))
-        compAltFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
+        compAltFile.write(str(data[6]) + "\n")
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
     else:
         print("IDK homie this shouldnt happen")
