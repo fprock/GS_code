@@ -8,14 +8,14 @@ from datetime import datetime
 from readUBX import *
 import pprint
 import threading
-import queue
+from queue import *
 import variables
 
-
+global hexBytes
+hexBytes = Queue()
 
 
 def importSerial():
-    variables.init()
     ser = serial.Serial('/dev/ttyUSB0', 9600)
     ser.flushInput()
     ser.flushOutput()
@@ -37,5 +37,15 @@ def importSerial():
             print(hex)
             hexFile.write(hex)
         if not ser.in_waiting:
-            variables.hexBytes.put(1)
+            item = 10.356
+            hexBytes.put(item)
+            # print("1 added to queue")
 
+
+def pull_from_queue():
+    print(str(hexBytes.empty()))
+    return hexBytes.get()
+
+
+def empty_queue():
+    return hexBytes.empty()

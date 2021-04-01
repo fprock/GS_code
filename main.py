@@ -5,7 +5,7 @@ import argparse
 import struct
 import multiprocessing as mp
 from datetime import datetime
-from importer import importSerial
+from importer import *
 from GUI import GUI_GO
 from readUBX import *
 import variables
@@ -113,7 +113,6 @@ args = parser.parse_args()
 if not args.d:
     ser = serial.Serial('/dev/ttyUSB0', 9600)
 
-variables.init()
 
 def main():
     Importer = mp.Process(target=importSerial)
@@ -149,127 +148,129 @@ def main():
         dataFile.write("READING FROM SERIAL\n")
 
     while True:
-        print(str(variables.hexBytes.get()))
-        data_raw = ""
-        if args.d:
-            data_raw = fakeSerial(baroMsgsFile)
-            if not data_raw:
-                break
-        else:
-            data_raw = ser.read(1)
+        if not empty_queue():
+            print("Stuff after this")
+            print(str(pull_from_queue()))
+            print("Deboog")
+            data_raw = ""
             print(str(data_raw))
-
-        if data_raw == "BB" and state == "initial":  # First starting byte
-            print(getTimeStamp())
-            dataFile.write("\n" + getTimeStamp() + "\n")
-            print("First FPROCK start flag received")
-            dataFile.write("First FPROCK start flag received\n")
-            state = "baroFirst"
-            payLoadLen = 0
-            payLoadCount = 0
-        elif data_raw == "AE" and state == "baroFirst":  # Second stating byte
-            print("Second FPROCK start flag received")
-            dataFile.write("Second FPROCK start flag received\n")
-            state = "Class"
-        elif state == "Class":  # finding class
-            if data_raw == "00":  # message class
-                print("Message Class received")
-                dataFile.write("Message Class received\n")
-                state = "messageClass"
-            elif data_raw == "01":  # baro class
-                print("Barometer Class received")
-                dataFile.write("Barometer Class received\n")
-                state = "baroClass"
-            else:
-                print("Invalid class received discarding data until next start")
-                dataFile.write("Invalid class received discarding data until next start\n")
-                state = "initial"
-        elif state == "baroClass":
-            if baro_state == "payload":
-                baroBytes.append(data_raw)
-                convertingData = data_raw + convertingData
-                dataCount = dataCount + 1
-                if dataCount == 4:
-                    data.append(struct.unpack('!f', bytes.fromhex(convertingData))[0])
-                    dataType_count = dataType_count + 1
-                    dataCount = 0
-                    convertingData = ""
-                payLoadCount = payLoadCount + 1
-                if payLoadCount == payLoadLen:
-                    print("PAYLOAD READ IN")
-                    dataFile.write("END OF PAYLOAD\n")
-                    state = "barochecksum"
-                    baro_state = "payloadLength"
-                    baroChecksumCount = 0
-                    payLoadCount = 0
-                    payLoadLen = 0
-                    payLoadCount = 0
-                    dataType_count = 1
-            elif baro_state == "payloadLength":
-                payLoadLenFlag = True
-                payLoadLen = int(data_raw, 16)
-                print("Barometer payload length is " + str(payLoadLen) + " bytes")
-                dataFile.write("Barometer payload length is " + str(payLoadLen) + " bytes\n")
-                baro_state = "payload"
-        elif state == "messageClass":
-            if payLoadLenFlag:
-                # message data conversion
-
-                payLoadCount = payLoadCount + 1
-                if payLoadCount == payLoadLen:
-                    print("END OF PAYLOAD")
-                    dataFile.write("END OF PAYLOAD\n")
-                    payLoadCount = 0
-            else:
-                payLoadLenFlag = True
-                payLoadLen = int(data_raw, 16)
-                print("Message payload length is " + str(payLoadLen) + " bytes")
-                dataFile.write("Message payload length is " + str(payLoadLen) + " bytes\n")
-                baroBytes.append(data_raw)
-        elif state == "barochecksum":
-            baroChecksumCount = baroChecksumCount + 1
-            baroChecksum.append(data_raw)
-            if baroChecksumCount == 2:
-                if validateBaroChecksum(baroBytes, baroChecksum):
-                    for i in range(0, 7):
-                        logData(i, data)
+            data_raw = ""
+            if data_raw == "BB" and state == "initial":  # First starting byte
+                print(getTimeStamp())
+                dataFile.write("\n" + getTimeStamp() + "\n")
+                print("First FPROCK start flag received")
+                dataFile.write("First FPROCK start flag received\n")
+                state = "baroFirst"
+                payLoadLen = 0
+                payLoadCount = 0
+            elif data_raw == "AE" and state == "baroFirst":  # Second stating byte
+                print("Second FPROCK start flag received")
+                dataFile.write("Second FPROCK start flag received\n")
+                state = "Class"
+            elif state == "Class":  # finding class
+                if data_raw == "00":  # message class
+                    print("Message Class received")
+                    dataFile.write("Message Class received\n")
+                    state = "messageClass"
+                elif data_raw == "01":  # baro class
+                    print("Barometer Class received")
+                    dataFile.write("Barometer Class received\n")
+                    state = "baroClass"
                 else:
-                    print("CHECKSUM INVALID IGNORING DATA")
-                print("\n")
-                state = "initial"
-                data = []
-                baroBytes = []
-                baroChecksum = []
-        elif state == "initial" and data_raw == "B5----":
-            print("Intercepting GPS data")
-            gpsByte_string = gpsByte_string + data_raw
-            gps_bytes.append(bytes(data_raw, 'UTF-8'))
-            state = "readGPS"
-            i = 1
-            print("GPS Byte #" + str(i) + ": " + data_raw)
-        elif state == "readGPS":
-            gpsByte_string = gpsByte_string + data_raw
-            gps_bytes.append(bytes(data_raw, 'UTF-8'))
-            i = i + 1
-            print("GPS Byte #" + str(i) + ": " + data_raw)
-            if i == 100:
-                state = "initial"
-                GPSdict = readUBX(gps_bytes)
-                for key, value in GPSdict.items():
-                    print(key + ":", value)
-                print("\n")
-                gps_bytes = []
-                gpsByte_string = ""
+                    print("Invalid class received discarding data until next start")
+                    dataFile.write("Invalid class received discarding data until next start\n")
+                    state = "initial"
+            elif state == "baroClass":
+                if baro_state == "payload":
+                    baroBytes.append(data_raw)
+                    convertingData = data_raw + convertingData
+                    dataCount = dataCount + 1
+                    if dataCount == 4:
+                        data.append(struct.unpack('!f', bytes.fromhex(convertingData))[0])
+                        dataType_count = dataType_count + 1
+                        dataCount = 0
+                        convertingData = ""
+                    payLoadCount = payLoadCount + 1
+                    if payLoadCount == payLoadLen:
+                        print("PAYLOAD READ IN")
+                        dataFile.write("END OF PAYLOAD\n")
+                        state = "barochecksum"
+                        baro_state = "payloadLength"
+                        baroChecksumCount = 0
+                        payLoadCount = 0
+                        payLoadLen = 0
+                        payLoadCount = 0
+                        dataType_count = 1
+                elif baro_state == "payloadLength":
+                    payLoadLenFlag = True
+                    payLoadLen = int(data_raw, 16)
+                    print("Barometer payload length is " + str(payLoadLen) + " bytes")
+                    dataFile.write("Barometer payload length is " + str(payLoadLen) + " bytes\n")
+                    baro_state = "payload"
+            elif state == "messageClass":
+                if payLoadLenFlag:
+                    # message data conversion
+
+                    payLoadCount = payLoadCount + 1
+                    if payLoadCount == payLoadLen:
+                        print("END OF PAYLOAD")
+                        dataFile.write("END OF PAYLOAD\n")
+                        payLoadCount = 0
+                else:
+                    payLoadLenFlag = True
+                    payLoadLen = int(data_raw, 16)
+                    print("Message payload length is " + str(payLoadLen) + " bytes")
+                    dataFile.write("Message payload length is " + str(payLoadLen) + " bytes\n")
+                    baroBytes.append(data_raw)
+            elif state == "barochecksum":
+                baroChecksumCount = baroChecksumCount + 1
+                baroChecksum.append(data_raw)
+                if baroChecksumCount == 2:
+                    if validateBaroChecksum(baroBytes, baroChecksum):
+                        for i in range(0, 7):
+                            logData(i, data)
+                    else:
+                        print("CHECKSUM INVALID IGNORING DATA")
+                    print("\n")
+                    state = "initial"
+                    data = []
+                    baroBytes = []
+                    baroChecksum = []
+            elif state == "initial" and data_raw == "B5----":
+                print("Intercepting GPS data")
+                gpsByte_string = gpsByte_string + data_raw
+                gps_bytes.append(bytes(data_raw, 'UTF-8'))
+                state = "readGPS"
+                i = 1
+                print("GPS Byte #" + str(i) + ": " + data_raw)
+            elif state == "readGPS":
+                gpsByte_string = gpsByte_string + data_raw
+                gps_bytes.append(bytes(data_raw, 'UTF-8'))
+                i = i + 1
+                print("GPS Byte #" + str(i) + ": " + data_raw)
+                if i == 100:
+                    state = "initial"
+                    GPSdict = readUBX(gps_bytes)
+                    for key, value in GPSdict.items():
+                        print(key + ":", value)
+                    print("\n")
+                    gps_bytes = []
+                    gpsByte_string = ""
+            else:
+                print(
+                    f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
+                dataFile.write(
+                    "ERROR: missing starting flag, discarding incoming data(" + str(data_raw) + ") and waiting till next start flags\n")
         else:
-            print(
-                f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
-            dataFile.write(
-                "ERROR: missing starting flag, discarding incoming data(" + str(data_raw) + ") and waiting till next "
-                                                                                            "start flags\n")
+            print("empty Queue")
 
-    if args.d:
-        baroMsgsFile.close()
 
+
+try:
+    main()
+except KeyboardInterrupt:
+    GUI.join()
+    Importer.join()
     rawPresFile.close()
     compPresFile.close()
     rawTempFile.close()
@@ -278,10 +279,4 @@ def main():
     compHumFile.close()
     dataFile.close()
 
-
-try:
-    main()
-except KeyboardInterrupt:
-    GUI.join()
-    Importer.join()
     sys.exit(0)
