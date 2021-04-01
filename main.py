@@ -3,14 +3,15 @@ import sys
 import time
 import argparse
 import struct
+import multiprocessing as mp
 from datetime import datetime
-# from GUI import GUI_GO
+from importer import importSerial
+from GUI import GUI_GO
 from readUBX import *
-import pprint
-import threading
+import variables
+from queue import *
 
 
-# import importSerial
 
 def getTimeStamp():
     dateTimeObj = datetime.now()
@@ -67,7 +68,7 @@ compAltFile = open(compAltFilePath, "w")
 compAltFile.write("0\n")
 dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
-
+global hexBytes
 
 def logData(dataType_count, data):
     if dataType_count == 0:
@@ -112,9 +113,14 @@ args = parser.parse_args()
 if not args.d:
     ser = serial.Serial('/dev/ttyUSB0', 9600)
 
+variables.init()
+
 def main():
-    # GUIThread = threading.Thread(target=importSerial)
-    # GUIThread.start()
+    Importer = mp.Process(target=importSerial)
+    Importer.start()
+
+    #GUI = mp.Process(target=GUI_GO)
+    #GUI.start()
 
     state = "initial"
     baro_state = "payloadLength"
@@ -143,6 +149,7 @@ def main():
         dataFile.write("READING FROM SERIAL\n")
 
     while True:
+        print(str(variables.hexBytes.get()))
         data_raw = ""
         if args.d:
             data_raw = fakeSerial(baroMsgsFile)
@@ -275,5 +282,6 @@ def main():
 try:
     main()
 except KeyboardInterrupt:
-    # GUIThread.join()
+    GUI.join()
+    Importer.join()
     sys.exit(0)

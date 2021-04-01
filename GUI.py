@@ -3,22 +3,14 @@ from matplotlib.figure import Figure
 import tkinter as tk
 import numpy as np
 
-
-#global vars
-global cond, pres_file, pres_data
-cond = False
-pres_data = np.array([])
-temp_data = np.array([])
-alt_data = np.array([])
-hum_data = np.array([])
-
-
 def GUI_GO():
-    
+    pres_data = np.array([])
+    temp_data = np.array([])
+    alt_data = np.array([])
+    hum_data = np.array([])
+
     def plot_pres():
-        pres_file = open('logs/CompPresLog.txt', 'r')
-        print("pressure FIle opened")
-        if cond:
+            global cond, pres_file, pres_data
             pres_line = pres_file.readline()
             pres_float = float(pres_line)
             print("pressure float = " + pres_float)
@@ -33,7 +25,6 @@ def GUI_GO():
 
             canvas.draw()
             pres_file.close()
-            print("pressure file closed")
 
 
 
