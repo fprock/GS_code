@@ -1,18 +1,10 @@
 import serial
 import queue
 import sys
-import time
-import argparse
-import struct
-from datetime import datetime
-from readUBX import *
-import pprint
-import threading
-from queue import *
-import variables
+from multiprocessing import Pipe
 
-global hexBytes
-hexBytes = Queue()
+global receiver
+sender, receiver = Pipe()
 
 
 def importSerial():
@@ -37,15 +29,6 @@ def importSerial():
             print(hex)
             hexFile.write(hex)
         if not ser.in_waiting:
-            item = 10.356
-            hexBytes.put(item)
-            # print("1 added to queue")
+            item = ""
+            sender.send(item)
 
-
-def pull_from_queue():
-    print(str(hexBytes.empty()))
-    return hexBytes.get()
-
-
-def empty_queue():
-    return hexBytes.empty()

@@ -6,11 +6,11 @@ import struct
 import multiprocessing as mp
 from datetime import datetime
 from importer import *
+from importer import receiver
 from GUI import GUI_GO
 from readUBX import *
 import variables
 from queue import *
-
 
 
 def getTimeStamp():
@@ -68,7 +68,8 @@ compAltFile = open(compAltFilePath, "w")
 compAltFile.write("0\n")
 dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
-global hexBytes
+
+
 
 def logData(dataType_count, data):
     if dataType_count == 0:
@@ -113,14 +114,14 @@ args = parser.parse_args()
 if not args.d:
     ser = serial.Serial('/dev/ttyUSB0', 9600)
 
+Importer = mp.Process(target=importSerial)
+Importer.start()
+
+
+# GUI = mp.Process(target=GUI_GO)
+# GUI.start()
 
 def main():
-    Importer = mp.Process(target=importSerial)
-    Importer.start()
-
-    #GUI = mp.Process(target=GUI_GO)
-    #GUI.start()
-
     state = "initial"
     baro_state = "payloadLength"
     payLoadLenFlag = False
@@ -148,10 +149,8 @@ def main():
         dataFile.write("READING FROM SERIAL\n")
 
     while True:
-        if not empty_queue():
-            print("Stuff after this")
-            print(str(pull_from_queue()))
-            print("Deboog")
+        data_raw = receiver.recv()
+        if len(data_raw) == 2:
             data_raw = ""
             print(str(data_raw))
             data_raw = ""
@@ -236,7 +235,7 @@ def main():
                     data = []
                     baroBytes = []
                     baroChecksum = []
-            elif state == "initial" and data_raw == "B5----":
+            elif state == "initial" and data_raw == "B5":
                 print("Intercepting GPS data")
                 gpsByte_string = gpsByte_string + data_raw
                 gps_bytes.append(bytes(data_raw, 'UTF-8'))
@@ -260,16 +259,16 @@ def main():
                 print(
                     f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
                 dataFile.write(
-                    "ERROR: missing starting flag, discarding incoming data(" + str(data_raw) + ") and waiting till next start flags\n")
+                    "ERROR: missing starting flag, discarding incoming data(" + str(
+                        data_raw) + ") and waiting till next start flags\n")
         else:
-            print("empty Queue")
-
+            print("Empty Byte Queue")
 
 
 try:
     main()
 except KeyboardInterrupt:
-    GUI.join()
+    # GUI.join()
     Importer.join()
     rawPresFile.close()
     compPresFile.close()
