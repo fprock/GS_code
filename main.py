@@ -44,7 +44,7 @@ rawHumFilePath = "logs/RawHumLog.txt"
 compHumFilePath = "logs/CompHumLog.txt"
 compAltFilePath = "logs/CompAltLog.txt"
 baroMsgsFilePath = "HexFile.txt"
-dataLogFilePath = "logs/data.log"
+dataLogFilePath = "logs/data.txt"
 byteLogFilePath = "logs/byteLog.txt"
 
 rawPresFile = open(rawPresFilePath, "w")
@@ -100,7 +100,6 @@ def logData(dataType_count, data):
         altSend.send(data)
     else:
         print("IDK homie this shouldnt happen")
-        # print(str(dataType_count))
 
 
 print("*BEGINNING PROGRAM*\n\n")
@@ -109,8 +108,6 @@ dataFile.write("*BEGINNING PROGRAM*\n\n")
 parser = argparse.ArgumentParser(description="Parse bool")
 parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
-if not args.d:
-    ser = serial.Serial('/dev/ttyUSB0', 9600)
 
 serOrFile = args.d
 Importer = mp.Process(target=importSerial, args=(serOrFile,))
@@ -150,7 +147,6 @@ def main():
     while True:
         data_raw = ""
         data_raw = receiver.recv()
-        # print(str(len(data_raw)))
         if len(data_raw) == 2:
             if data_raw == "BB" and state == "initial":  # First starting byte
                 print(getTimeStamp())
@@ -244,7 +240,6 @@ def main():
                 gpsByte_string = gpsByte_string + data_raw
                 gps_bytes.append(bytes(data_raw, 'UTF-8'))
                 i = i + 1
-                print("GPS Byte #" + str(i) + ": " + data_raw)
                 if i == 100:
                     state = "initial"
                     GPSdict = readUBX(gps_bytes)
