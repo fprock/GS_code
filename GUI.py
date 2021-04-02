@@ -1,6 +1,7 @@
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import tkinter as tk
+from tkinter import *
 import numpy as np
 import multiprocessing as mp
 
@@ -22,12 +23,13 @@ def GUI_GO():
         global cond, pres_data
         if cond:
             pres_float = presRec.recv()
-            print("pressure float = " + str(pres_float))
+            atm_float = pres_float / 101325
+            #print("pressure float = " + str(pres_float))
             if len(pres_data) < 100:
-                pres_data = np.append(pres_data, pres_float)
+                pres_data = np.append(pres_data, atm_float)
             else:
                 pres_data[0:99] = pres_data[1:100]
-                pres_data[99] = pres_float
+                pres_data[99] = atm_float
 
             lines.set_xdata(np.arange(0, len(pres_data)))
             lines.set_ydata(pres_data)
@@ -39,7 +41,7 @@ def GUI_GO():
         global cond, temp_data
         if cond:
             temp_float = tempRec.recv()
-            print("temp float = " + str(temp_float))
+            #print("temp float = " + str(temp_float))
             if len(temp_data) < 100:
                 temp_data = np.append(temp_data, temp_float)
             else:
@@ -56,7 +58,7 @@ def GUI_GO():
         global cond, alt_data
         if cond:
             alt_float = altRec.recv()
-            print("alt float = " + str(alt_float))
+            #print("alt float = " + str(alt_float))
             if len(alt_data) < 100:
                 alt_data = np.append(alt_data, alt_float)
             else:
@@ -73,7 +75,7 @@ def GUI_GO():
         global cond, hum_data
         if cond:
             hum_float = humRec.recv()
-            print("hum float = " + str(hum_float))
+            #print("hum float = " + str(hum_float))
             if len(hum_data) < 100:
                 hum_data = np.append(hum_data, hum_float)
             else:
@@ -114,9 +116,9 @@ def GUI_GO():
     # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax.set_title('Barometric Pressure')
     ax.set_xlabel('Sample')
-    ax.set_ylabel('Pressure (kPa)')
+    ax.set_ylabel('Pressure (atm)')
     ax.set_xlim(0, 100)
-    ax.set_ylim(101600, 101625)
+    ax.set_ylim(0.98, 1)
     lines = ax.plot([], [])[0]
 
     canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
@@ -132,7 +134,7 @@ def GUI_GO():
     ax1.set_xlabel('Sample')
     ax1.set_ylabel('Altitude (m)')
     ax1.set_xlim(0, 100)
-    ax1.set_ylim(12, 14)
+    ax1.set_ylim(12, 20)
     lines1 = ax1.plot([], [])[0]
 
     canvas1 = FigureCanvasTkAgg(fig1, master=root)  # A tk.DrawingArea.
@@ -148,11 +150,11 @@ def GUI_GO():
     ax2.set_xlabel('Sample')
     ax2.set_ylabel('Temperature (C)')
     ax2.set_xlim(0, 100)
-    ax2.set_ylim(24, 24.2)
+    ax2.set_ylim(15, 45)
     lines2 = ax2.plot([], [])[0]
 
     canvas2 = FigureCanvasTkAgg(fig2, master=root)  # A tk.DrawingArea.
-    canvas2.get_tk_widget().place(x=10, y=400, width=650, height=400)
+    canvas2.get_tk_widget().place(x=10, y=400, width=500, height=400)
     canvas2.draw()
     # Humidity Plot Configuration
     fig3 = Figure()
@@ -163,21 +165,24 @@ def GUI_GO():
     ax3.set_xlabel('Sample')
     ax3.set_ylabel('Humidity (%)')
     ax3.set_xlim(0, 100)
-    ax3.set_ylim(50, 52)
+    ax3.set_ylim(0, 100)
     lines3 = ax3.plot([], [])[0]
 
     canvas3 = FigureCanvasTkAgg(fig3, master=root)  # A tk.DrawingArea.
     canvas3.get_tk_widget().place(x=950, y=400, width=600, height=400)
     canvas3.draw()
 
+    #GPS Text Out
+    gps_out = Text(root, width = 30, height = 20)
+    gps_out.pack(pady = 60)
     # Start and Stop Buttons
     root.update()
     start = tk.Button(root, text="Begin Plotting", font=('calbiri', 12), command=lambda: start_plot())
-    start.place(x=625, y=350)
+    start.place(x=625, y=20)
 
     root.update()
     stop = tk.Button(root, text="Stop Plotting", font=('calbiri', 12), command=lambda: stop_plot())
-    stop.place(x=start.winfo_x() + start.winfo_reqwidth() + 20, y=350)
+    stop.place(x=start.winfo_x() + start.winfo_reqwidth() + 20, y=20)
 
     # Configure Serial Port
     # s = sr.Serial('COM8', 115200)
