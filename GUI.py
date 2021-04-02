@@ -2,7 +2,14 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import tkinter as tk
 import numpy as np
-from main import presRec, tempRec, humRec, altRec
+import multiprocessing as mp
+
+global presSend, tempSend, humSend, altSend, presRec, tempRec, humRec, altRec
+presSend, presRec = mp.Pipe()
+tempSend, tempRec = mp.Pipe()
+humSend, humRec = mp.Pipe()
+altSend, altRec = mp.Pipe()
+
 
 def GUI_GO():
     pres_data = np.array([])
@@ -11,23 +18,21 @@ def GUI_GO():
     hum_data = np.array([])
 
     def plot_pres():
-            global cond, pres_file, pres_data
-            pres_line = pres_file.readline()
-            pres_float = float(pres_line)
-            print("pressure float = " + pres_float)
-            if len(pres_data) < 100:
-                pres_data = np.append(pres_data,pres_float)
-            else:
-                pres_data[0:99] = pres_data[1:100]
-                pres_data[99] = pres_float
+        global cond, pres_file, pres_data
+        pres_line = pres_file.readline()
+        pres_float = float(pres_line)
+        print("pressure float = " + pres_float)
+        if len(pres_data) < 100:
+            pres_data = np.append(pres_data, pres_float)
+        else:
+            pres_data[0:99] = pres_data[1:100]
+            pres_data[99] = pres_float
 
-            lines.set_xdata(np.arange(0, len(pres_data)))
-            lines.set_ydata(pres_data)
+        lines.set_xdata(np.arange(0, len(pres_data)))
+        lines.set_ydata(pres_data)
 
-            canvas.draw()
-            pres_file.close()
-
-
+        canvas.draw()
+        pres_file.close()
 
     def plot_temp():
         global cond, temp_file, temp_data
@@ -90,100 +95,96 @@ def GUI_GO():
         plot_hum()
         root.after(1, plot_all)
 
-
     def start_plot():
         global cond
         cond = True
-
 
     def stop_plot():
         global cond
         cond = False
 
-    #-----GUI Window
+    # -----GUI Window
     root = tk.Tk()
     root.title('FPRock Live Data')
     root.configure(background='light blue')
     root.geometry("1600x800")
 
-    #Barometric Pressure Plot Configuration
+    # Barometric Pressure Plot Configuration
     fig = Figure()
     ax = fig.add_subplot(111)
 
-    #ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
+    # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax.set_title('Barometric Pressure')
     ax.set_xlabel('Sample')
     ax.set_ylabel('Pressure (kPa)')
-    ax.set_xlim(0,100)
-    ax.set_ylim(101600,101625)
-    lines = ax.plot([],[])[0]
+    ax.set_xlim(0, 100)
+    ax.set_ylim(101600, 101625)
+    lines = ax.plot([], [])[0]
 
     canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
-    canvas.get_tk_widget().place(x = 10,y=0, width = 500,height = 400)
+    canvas.get_tk_widget().place(x=10, y=0, width=500, height=400)
     canvas.draw()
 
-    #Altitude Plot Configuration
+    # Altitude Plot Configuration
     fig1 = Figure()
     ax1 = fig1.add_subplot(111)
 
-    #ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
+    # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax1.set_title('Altitude')
     ax1.set_xlabel('Sample')
     ax1.set_ylabel('Altitude (m)')
-    ax1.set_xlim(0,100)
-    ax1.set_ylim(12,14)
-    lines1 = ax1.plot([],[])[0]
+    ax1.set_xlim(0, 100)
+    ax1.set_ylim(12, 14)
+    lines1 = ax1.plot([], [])[0]
 
     canvas1 = FigureCanvasTkAgg(fig1, master=root)  # A tk.DrawingArea.
-    canvas1.get_tk_widget().place(x = 950,y=0, width = 600,height = 400)
+    canvas1.get_tk_widget().place(x=950, y=0, width=600, height=400)
     canvas1.draw()
 
-    #Temperature Plot Configuration
+    # Temperature Plot Configuration
     fig2 = Figure()
     ax2 = fig2.add_subplot(111)
 
-    #ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
+    # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax2.set_title('Temperature')
     ax2.set_xlabel('Sample')
     ax2.set_ylabel('Temperature (C)')
-    ax2.set_xlim(0,100)
-    ax2.set_ylim(24,24.2)
-    lines2 = ax2.plot([],[])[0]
+    ax2.set_xlim(0, 100)
+    ax2.set_ylim(24, 24.2)
+    lines2 = ax2.plot([], [])[0]
 
     canvas2 = FigureCanvasTkAgg(fig2, master=root)  # A tk.DrawingArea.
-    canvas2.get_tk_widget().place(x = 10,y=400, width = 650,height = 400)
+    canvas2.get_tk_widget().place(x=10, y=400, width=650, height=400)
     canvas2.draw()
-    #Humidity Plot Configuration
+    # Humidity Plot Configuration
     fig3 = Figure()
     ax3 = fig3.add_subplot(111)
 
-    #ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
+    # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax3.set_title('Humidity')
     ax3.set_xlabel('Sample')
     ax3.set_ylabel('Humidity (%)')
-    ax3.set_xlim(0,100)
+    ax3.set_xlim(0, 100)
     ax3.set_ylim(50, 52)
-    lines3 = ax3.plot([],[])[0]
+    lines3 = ax3.plot([], [])[0]
 
     canvas3 = FigureCanvasTkAgg(fig3, master=root)  # A tk.DrawingArea.
-    canvas3.get_tk_widget().place(x = 950,y=400, width = 600,height = 400)
+    canvas3.get_tk_widget().place(x=950, y=400, width=600, height=400)
     canvas3.draw()
 
-    #Start and Stop Buttons
+    # Start and Stop Buttons
     root.update()
-    start = tk.Button(root, text = "Begin Plotting", font = ('calbiri',12),command = lambda: start_plot())
-    start.place(x = 625, y = 350 )
+    start = tk.Button(root, text="Begin Plotting", font=('calbiri', 12), command=lambda: start_plot())
+    start.place(x=625, y=350)
 
     root.update()
-    stop = tk.Button(root, text = "Stop Plotting", font = ('calbiri',12), command = lambda:stop_plot())
-    stop.place(x = start.winfo_x()+start.winfo_reqwidth() + 20, y = 350)
+    stop = tk.Button(root, text="Stop Plotting", font=('calbiri', 12), command=lambda: stop_plot())
+    stop.place(x=start.winfo_x() + start.winfo_reqwidth() + 20, y=350)
 
-    #Configure Serial Port
-    #s = sr.Serial('COM8', 115200)
-    #s.reset_input_buffer()
-
+    # Configure Serial Port
+    # s = sr.Serial('COM8', 115200)
+    # s.reset_input_buffer()
 
     root.after(1, plot_all)
 
     root.mainloop()
-

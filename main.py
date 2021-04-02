@@ -4,14 +4,9 @@ import multiprocessing as mp
 from datetime import datetime
 from importer import *
 from importer import receiver
-from GUI import GUI_GO
+from GUI import GUI_GO, presSend, tempSend, humSend, altSend
 from readUBX import *
 
-global presRec, tempRec, humRec, altRec
-presSend, presRec = Pipe()
-tempSend, tempRec = Pipe()
-humSend, humRec = Pipe()
-altSend, altRec = Pipe()
 
 def getTimeStamp():
     dateTimeObj = datetime.now()
@@ -70,7 +65,6 @@ dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
 
 
-
 def logData(dataType_count, data):
     if dataType_count == 0:
         print("Raw Pressure: " + str(data[0]))
@@ -118,7 +112,8 @@ args = parser.parse_args()
 if not args.d:
     ser = serial.Serial('/dev/ttyUSB0', 9600)
 
-Importer = mp.Process(target=importSerial)
+serOrFile = args.d
+Importer = mp.Process(target=importSerial, args=(serOrFile,))
 Importer.start()
 
 
@@ -144,7 +139,7 @@ def main():
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
         dataFile.write("*ENTERING DEVELOPMENT MODE*\n")
-        baroMsgsFile = open(baroMsgsFilePath, "r")
+        #baroMsgsFile = open(baroMsgsFilePath, "r")
         print("READING FROM FILE\n")
         dataFile.write("READING FROM FILE\n")
     else:
@@ -155,7 +150,7 @@ def main():
     while True:
         data_raw = ""
         data_raw = receiver.recv()
-        #print(str(len(data_raw)))
+        # print(str(len(data_raw)))
         if len(data_raw) == 2:
             if data_raw == "BB" and state == "initial":  # First starting byte
                 print(getTimeStamp())
