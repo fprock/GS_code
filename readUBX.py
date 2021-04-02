@@ -1,6 +1,7 @@
 import pprint
 import struct
 import binascii
+from bitarray import *
 
 def readUBX(readbytes):
     RELPOSNED = b'3c'
@@ -68,7 +69,6 @@ def persePVT(ackPacket):
     byteoffset = 0
     for i in range(0, 4):
         tempBytes += bytes.decode(ackPacket[byteoffset + i])
-    print(tempBytes)
     pospvt["iTOW"] = int(tempBytes, 16)
     tempBytes = ""
 
@@ -87,13 +87,44 @@ def persePVT(ackPacket):
         pospvt[key] = int(bytevalue, 16)
         i += 1
 
-    #validity Flags
+    # validity Flags
     byteoffset = 11
-    print(ackPacket[byteoffset])
     bytevalue = bytes.decode(ackPacket[byteoffset])
+    validbits = bin(int(bytevalue, 16)).zfill(8)
+    pospvt["Valid Date"] = validbits[9]
+    pospvt["Valid Time"] = validbits[8]
+    pospvt["Fully Resolved"] = validbits[7]
+    pospvt["Valid Mag"] = validbits[6]
+
+    # time accuracy esitmate
+    byteoffset = 12
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
     print(bytevalue)
-    binary_string = binascii.unhexlify(bytevalue)
-    print(binary_string)
+
+    # Fraction of a second
+    byteoffset = 16
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    print(bytevalue)
+
+    #fix type
+    byteoffset = 20
+    bytevalue = bytes.decode(ackPacket[byteoffset])
+    if int(bytevalue[1]) == 0:
+        pospvt["Fix Type"] = "No Fix"
+    elif int(bytevalue[1]) == 1:
+        pospvt["Fix Type"] = "Dead reckoning only"
+    elif int(bytevalue[1]) == 2:
+        pospvt["Fix Type"] = "2D-Fix"
+    elif int(bytevalue[1]) == 3:
+        pospvt["Fix Type"] = "3D-Fix"
+    elif int(bytevalue[1]) == 6:
+        pospvt["Fix Type"] = "GNSS + Dead reckoning combined"
+    elif int(bytevalue[1]) == 5:
+        pospvt["Fix Type"] = "Time only fix"
 
     # PosLon
     byteoffset = 24
@@ -101,7 +132,7 @@ def persePVT(ackPacket):
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
 
-    print("lon Bytes: " + str(bytevalue))
+    #print("lon Bytes: " + str(bytevalue))
     pospvt["Longitude"] = int(bytevalue, 16)
 
     # PosLat
@@ -109,7 +140,7 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("lat Bytes: " + str(bytevalue))
+    #print("lat Bytes: " + str(bytevalue))
     pospvt["Latitude"] = int(bytevalue, 16)
 
     # posHeight
@@ -117,7 +148,7 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("height Bytes: " + str(bytevalue))
+    #print("height Bytes: " + str(bytevalue))
     pospvt["Height"] = int(bytevalue, 16)
 
     # Height above mean sea level
@@ -125,7 +156,7 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("hMSL Bytes: " + str(bytevalue))
+    #print("hMSL Bytes: " + str(bytevalue))
     pospvt["hMSL"] = int(bytevalue, 16)
 
     # Ground Speed
@@ -133,7 +164,7 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("gSpeed Bytes: " + str(bytevalue))
+    #print("gSpeed Bytes: " + str(bytevalue))
     pospvt["gSpeed"] = int(bytevalue, 16)
 
     # Heading of motion
@@ -141,7 +172,7 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("headMot Bytes: " + str(bytevalue))
+    #print("headMot Bytes: " + str(bytevalue))
     pospvt["headMot"] = int(bytevalue, 16)
 
     return pospvt

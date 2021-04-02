@@ -235,7 +235,6 @@ def main():
                 gps_bytes.append(bytes(data_raw, 'UTF-8'))
                 state = "readGPS"
                 i = 1
-                print("GPS Byte #" + str(i) + ": " + data_raw)
             elif state == "readGPS":
                 gpsByte_string = gpsByte_string + data_raw
                 gps_bytes.append(bytes(data_raw, 'UTF-8'))
@@ -252,8 +251,7 @@ def main():
                 print(
                     f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
                 dataFile.write(
-                    "ERROR: missing starting flag, discarding incoming data(" + str(
-                        data_raw) + ") and waiting till next start flags\n")
+                    "ERROR: missing starting flag, discarding incoming data(" + str(data_raw) + ") and waiting till next start flags\n")
         else:
             continue
 

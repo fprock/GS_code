@@ -8,9 +8,10 @@ sender, receiver = Pipe()
 
 
 def importSerial(SerOrLog):
-    ser = serial.Serial('/dev/ttyUSB1', 9600)
-    ser.flushInput()
-    ser.flushOutput()
+    if not SerOrLog:
+        ser = serial.Serial('/dev/ttyUSB1', 9600)
+        ser.flushInput()
+        ser.flushOutput()
     byteFile = open("logs/ByteFile.txt", 'w')
     hexFile = open("logs/HexFile.txt", 'w')
     dataFile = open("Testdata.txt", "r")
