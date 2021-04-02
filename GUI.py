@@ -4,42 +4,42 @@ import tkinter as tk
 import numpy as np
 import multiprocessing as mp
 
-global presSend, tempSend, humSend, altSend, presRec, tempRec, humRec, altRec
+global presSend, tempSend, humSend, altSend, presRec, tempRec, humRec, altRec, cond, pres_data, temp_data, alt_data, hum_data
 presSend, presRec = mp.Pipe()
 tempSend, tempRec = mp.Pipe()
 humSend, humRec = mp.Pipe()
 altSend, altRec = mp.Pipe()
-
+cond = False
+pres_data = np.array([])
+temp_data = np.array([])
+alt_data = np.array([])
+hum_data = np.array([])
 
 def GUI_GO():
-    pres_data = np.array([])
-    temp_data = np.array([])
-    alt_data = np.array([])
-    hum_data = np.array([])
-
+    
+    
     def plot_pres():
-        global cond, pres_file, pres_data
-        pres_line = pres_file.readline()
-        pres_float = float(pres_line)
-        print("pressure float = " + pres_float)
-        if len(pres_data) < 100:
-            pres_data = np.append(pres_data, pres_float)
-        else:
-            pres_data[0:99] = pres_data[1:100]
-            pres_data[99] = pres_float
+        global cond, pres_data
+        if cond:
+            pres_float = presRec.recv()
+            print("pressure float = " + str(pres_float))
+            if len(pres_data) < 100:
+                pres_data = np.append(pres_data, pres_float)
+            else:
+                pres_data[0:99] = pres_data[1:100]
+                pres_data[99] = pres_float
 
-        lines.set_xdata(np.arange(0, len(pres_data)))
-        lines.set_ydata(pres_data)
+            lines.set_xdata(np.arange(0, len(pres_data)))
+            lines.set_ydata(pres_data)
 
-        canvas.draw()
-        pres_file.close()
+            canvas.draw()
+        
 
     def plot_temp():
-        global cond, temp_file, temp_data
-        temp_file = open('logs/CompTempLog.txt', 'r')
+        global cond, temp_data
         if cond:
-            temp_line = temp_file.readline()
-            temp_float = float(temp_line)
+            temp_float = tempRec.recv()
+            print("temp float = " + str(temp_float))
             if len(temp_data) < 100:
                 temp_data = np.append(temp_data, temp_float)
             else:
@@ -50,14 +50,13 @@ def GUI_GO():
             lines2.set_ydata(temp_data)
 
             canvas2.draw()
-        temp_file.close()
+
 
     def plot_alt():
-        global cond, alt_file, alt_data
-        alt_file = open('logs/CompAltLog.txt', 'r')
+        global cond, alt_data
         if cond:
-            alt_line = alt_file.readline()
-            alt_float = float(alt_line)
+            alt_float = altRec.recv()
+            print("alt float = " + str(alt_float))
             if len(alt_data) < 100:
                 alt_data = np.append(alt_data, alt_float)
             else:
@@ -68,16 +67,15 @@ def GUI_GO():
             lines1.set_ydata(alt_data)
 
             canvas1.draw()
-            alt_file.close()
+
 
     def plot_hum():
-        global cond, hum_file, hum_data
-        hum_file = open('logs/CompHumLog.txt', 'r')
+        global cond, hum_data
         if cond:
-            hum_line = hum_file.readline()
-            hum_float = float(hum_line)
+            hum_float = humRec.recv()
+            print("hum float = " + str(hum_float))
             if len(hum_data) < 100:
-                hum_data = np.append(hum_data, float(hum_line[0:4]))
+                hum_data = np.append(hum_data, hum_float)
             else:
                 hum_data[0:99] = hum_data[1:100]
                 hum_data[99] = hum_float
@@ -86,7 +84,7 @@ def GUI_GO():
             lines3.set_ydata(hum_data)
 
             canvas3.draw()
-        hum_file.close()
+
 
     def plot_all():
         plot_pres()

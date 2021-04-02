@@ -82,22 +82,22 @@ def logData(dataType_count, data):
         print("Calculated Pressure(Pa): " + str(data[3]))
         compPresFile.write(str(data[3]) + "\n")
         dataFile.write("Calculated Pressure(Pa): " + str(data[3]) + "\n")
-        presSend.send(data)
+        presSend.send(data[3])
     elif dataType_count == 4:
         print("Calculated Temperature(C): " + str(data[4]))
         compTempFile.write(str(data[4]) + "\n")
         dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
-        tempSend.send(data)
+        tempSend.send(data[4])
     elif dataType_count == 5:
         print("Calculated Humidity(%): " + str(data[5]))
         compHumFile.write(str(data[5]) + "\n")
         dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
-        humSend.send(data)
+        humSend.send(data[5])
     elif dataType_count == 6:
         print("Calculated Altitude: " + str(data[6]))
         compAltFile.write(str(data[6]) + "\n")
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
-        altSend.send(data)
+        altSend.send(data[6])
     else:
         print("IDK homie this shouldnt happen")
         # print(str(dataType_count))
@@ -109,16 +109,14 @@ dataFile.write("*BEGINNING PROGRAM*\n\n")
 parser = argparse.ArgumentParser(description="Parse bool")
 parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
-if not args.d:
-    ser = serial.Serial('/dev/ttyUSB0', 9600)
 
 serOrFile = args.d
 Importer = mp.Process(target=importSerial, args=(serOrFile,))
 Importer.start()
 
 
-# GUI = mp.Process(target=GUI_GO)
-# GUI.start()
+GUI = mp.Process(target=GUI_GO)
+GUI.start()
 
 def main():
     state = "initial"
@@ -150,7 +148,6 @@ def main():
     while True:
         data_raw = ""
         data_raw = receiver.recv()
-        # print(str(len(data_raw)))
         if len(data_raw) == 2:
             if data_raw == "BB" and state == "initial":  # First starting byte
                 print(getTimeStamp())
@@ -268,6 +265,7 @@ try:
 except KeyboardInterrupt:
     # GUI.join()
     Importer.join()
+    GUI.join()
     rawPresFile.close()
     compPresFile.close()
     rawTempFile.close()
