@@ -44,7 +44,7 @@ rawHumFilePath = "logs/RawHumLog.txt"
 compHumFilePath = "logs/CompHumLog.txt"
 compAltFilePath = "logs/CompAltLog.txt"
 baroMsgsFilePath = "HexFile.txt"
-dataLogFilePath = "logs/data.log"
+dataLogFilePath = "logs/data.txt"
 byteLogFilePath = "logs/byteLog.txt"
 
 rawPresFile = open(rawPresFilePath, "w")
@@ -100,7 +100,6 @@ def logData(dataType_count, data):
         altQueue.put(data[6])
     else:
         print("IDK homie this shouldnt happen")
-        # print(str(dataType_count))
 
 
 print("*BEGINNING PROGRAM*\n\n")
@@ -236,12 +235,10 @@ def main():
                 gps_bytes.append(bytes(data_raw, 'UTF-8'))
                 state = "readGPS"
                 i = 1
-                print("GPS Byte #" + str(i) + ": " + data_raw)
             elif state == "readGPS":
                 gpsByte_string = gpsByte_string + data_raw
                 gps_bytes.append(bytes(data_raw, 'UTF-8'))
                 i = i + 1
-                print("GPS Byte #" + str(i) + ": " + data_raw)
                 if i == 100:
                     state = "initial"
                     GPSdict = readUBX(gps_bytes)
@@ -254,8 +251,7 @@ def main():
                 print(
                     f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
                 dataFile.write(
-                    "ERROR: missing starting flag, discarding incoming data(" + str(
-                        data_raw) + ") and waiting till next start flags\n")
+                    "ERROR: missing starting flag, discarding incoming data(" + str(data_raw) + ") and waiting till next start flags\n")
         else:
             continue
 

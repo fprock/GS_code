@@ -179,10 +179,6 @@ def GUI_GO():
     stop = tk.Button(root, text="Stop Plotting", font=('calbiri', 12), command=lambda: stop_plot())
     stop.place(x=start.winfo_x() + start.winfo_reqwidth() + 20, y=350)
 
-    # Configure Serial Port
-    # s = sr.Serial('COM8', 115200)
-    # s.reset_input_buffer()
-
-    root.after(1, plot_all)
+    root.after(0, plot_all)
 
     root.mainloop()
