@@ -1,17 +1,17 @@
-import serial
 import sys
-import time
 import argparse
-import struct
 import multiprocessing as mp
 from datetime import datetime
 from importer import *
 from importer import receiver
 from GUI import GUI_GO
 from readUBX import *
-import variables
-from queue import *
 
+global presRec, tempRec, humRec, altRec
+presSend, presRec = Pipe()
+tempSend, tempRec = Pipe()
+humSend, humRec = Pipe()
+altSend, altRec = Pipe()
 
 def getTimeStamp():
     dateTimeObj = datetime.now()
@@ -88,18 +88,22 @@ def logData(dataType_count, data):
         print("Calculated Pressure(Pa): " + str(data[3]))
         compPresFile.write(str(data[3]) + "\n")
         dataFile.write("Calculated Pressure(Pa): " + str(data[3]) + "\n")
+        presSend.send(data)
     elif dataType_count == 4:
         print("Calculated Temperature(C): " + str(data[4]))
         compTempFile.write(str(data[4]) + "\n")
         dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
+        tempSend.send(data)
     elif dataType_count == 5:
         print("Calculated Humidity(%): " + str(data[5]))
         compHumFile.write(str(data[5]) + "\n")
         dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
+        humSend.send(data)
     elif dataType_count == 6:
         print("Calculated Altitude: " + str(data[6]))
         compAltFile.write(str(data[6]) + "\n")
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
+        altSend.send(data)
     else:
         print("IDK homie this shouldnt happen")
         # print(str(dataType_count))
@@ -149,11 +153,10 @@ def main():
         dataFile.write("READING FROM SERIAL\n")
 
     while True:
+        data_raw = ""
         data_raw = receiver.recv()
+        #print(str(len(data_raw)))
         if len(data_raw) == 2:
-            data_raw = ""
-            print(str(data_raw))
-            data_raw = ""
             if data_raw == "BB" and state == "initial":  # First starting byte
                 print(getTimeStamp())
                 dataFile.write("\n" + getTimeStamp() + "\n")
@@ -262,7 +265,7 @@ def main():
                     "ERROR: missing starting flag, discarding incoming data(" + str(
                         data_raw) + ") and waiting till next start flags\n")
         else:
-            print("Empty Byte Queue")
+            continue
 
 
 try:

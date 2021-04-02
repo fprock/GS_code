@@ -1,7 +1,6 @@
 import serial
-import queue
-import sys
 from multiprocessing import Pipe
+from codecs import *
 
 global receiver
 sender, receiver = Pipe()
@@ -17,17 +16,11 @@ def importSerial():
     while True:
         while ser.in_waiting:
             byte = ser.read(1)
-            byteFile.write(str(byte) + '\n')
-            hex = str(byte)[4:6]
-            if hex == "":
-                continue
-            elif hex == "\n":
-                continue
-            elif hex == "'":
-                continue
-            hex = hex.upper()
-            print(hex)
-            hexFile.write(hex)
+            byteFile.write(str(byte.hex()) + '\n')
+            data = byte.hex()
+            data = data.upper()
+            hexFile.write(data)
+            sender.send(data)
         if not ser.in_waiting:
             item = ""
             sender.send(item)

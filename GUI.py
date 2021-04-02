@@ -2,6 +2,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import tkinter as tk
 import numpy as np
+from main import presRec, tempRec, humRec, altRec
 
 def GUI_GO():
     pres_data = np.array([])
