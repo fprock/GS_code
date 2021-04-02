@@ -4,7 +4,7 @@ import multiprocessing as mp
 from datetime import datetime
 from importer import *
 from importer import receiver
-from GUI import GUI_GO, presSend, tempSend, humSend, altSend
+from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue
 from readUBX import *
 
 
@@ -82,22 +82,22 @@ def logData(dataType_count, data):
         print("Calculated Pressure(Pa): " + str(data[3]))
         compPresFile.write(str(data[3]) + "\n")
         dataFile.write("Calculated Pressure(Pa): " + str(data[3]) + "\n")
-        presSend.send(data[3])
+        presQueue.put(data[3])
     elif dataType_count == 4:
         print("Calculated Temperature(C): " + str(data[4]))
         compTempFile.write(str(data[4]) + "\n")
         dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
-        tempSend.send(data[4])
+        tempQueue.put(data[4])
     elif dataType_count == 5:
         print("Calculated Humidity(%): " + str(data[5]))
         compHumFile.write(str(data[5]) + "\n")
         dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
-        humSend.send(data[5])
+        humQueue.put(data[5])
     elif dataType_count == 6:
         print("Calculated Altitude: " + str(data[6]))
         compAltFile.write(str(data[6]) + "\n")
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
-        altSend.send(data[6])
+        altQueue.put(data[6])
     else:
         print("IDK homie this shouldnt happen")
         # print(str(dataType_count))

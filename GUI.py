@@ -4,11 +4,11 @@ import tkinter as tk
 import numpy as np
 import multiprocessing as mp
 
-global presSend, tempSend, humSend, altSend, presRec, tempRec, humRec, altRec, cond, pres_data, temp_data, alt_data, hum_data
-presSend, presRec = mp.Pipe()
-tempSend, tempRec = mp.Pipe()
-humSend, humRec = mp.Pipe()
-altSend, altRec = mp.Pipe()
+global presQueue, tempQueue, humQueue, altQueue, cond, pres_data, temp_data, alt_data, hum_data
+presQueue = mp.Queue()
+tempQueue = mp.Queue()
+humQueue = mp.Queue()
+altQueue = mp.Queue()
 cond = False
 pres_data = np.array([])
 temp_data = np.array([])
@@ -21,8 +21,8 @@ def GUI_GO():
     def plot_pres():
         global cond, pres_data
         if cond:
-            pres_float = presRec.recv()
-            print("pressure float = " + str(pres_float))
+            pres_float = presQueue.get()
+            #print("pressure float = " + str(pres_float))
             if len(pres_data) < 100:
                 pres_data = np.append(pres_data, pres_float)
             else:
@@ -38,8 +38,8 @@ def GUI_GO():
     def plot_temp():
         global cond, temp_data
         if cond:
-            temp_float = tempRec.recv()
-            print("temp float = " + str(temp_float))
+            temp_float = tempQueue.get()
+            #print("temp float = " + str(temp_float))
             if len(temp_data) < 100:
                 temp_data = np.append(temp_data, temp_float)
             else:
@@ -55,8 +55,8 @@ def GUI_GO():
     def plot_alt():
         global cond, alt_data
         if cond:
-            alt_float = altRec.recv()
-            print("alt float = " + str(alt_float))
+            alt_float = altQueue.get()
+            #print("alt float = " + str(alt_float))
             if len(alt_data) < 100:
                 alt_data = np.append(alt_data, alt_float)
             else:
@@ -72,8 +72,8 @@ def GUI_GO():
     def plot_hum():
         global cond, hum_data
         if cond:
-            hum_float = humRec.recv()
-            print("hum float = " + str(hum_float))
+            hum_float = humQueue.get()
+            #print("hum float = " + str(hum_float))
             if len(hum_data) < 100:
                 hum_data = np.append(hum_data, hum_float)
             else:
