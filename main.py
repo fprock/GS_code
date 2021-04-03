@@ -27,8 +27,6 @@ def validateBaroChecksum(Baro_Bytes, Baro_checksumBytes):
         CK_B = CK_B + CK_A
     CK_A &= 0xff
     CK_B &= 0xff
-    print("Cal CK_A = " + str(CK_A) + " Actual CH_A = " + str(int(Baro_checksumBytes[0], 16)) + " Cal CK_B = " + str(
-        CK_B) + " Actual CH_B = " + str(int(Baro_checksumBytes[1], 16)))
     if (CK_A == int(Baro_checksumBytes[0], 16)) and (CK_B == int(Baro_checksumBytes[1], 16)):
         print("Barometer Checksum valid")
         return True
@@ -90,20 +88,17 @@ def logData(dataType_count, data, GUI_iterater):
         print("Calculated Temperature(C): " + str(data[4]))
         compTempFile.write(str(data[4]) + "\n")
         dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
-        if GUI_iterater == 9:
-            tempQueue.put(data[4])
+        tempQueue.put(data[4])
     elif dataType_count == 5:
         print("Calculated Humidity(%): " + str(data[5]))
         compHumFile.write(str(data[5]) + "\n")
         dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
-        if GUI_iterater == 9:
-            humQueue.put(data[5])
+        humQueue.put(data[5])
     elif dataType_count == 6:
         print("Calculated Altitude: " + str(data[6]))
         compAltFile.write(str(data[6]) + "\n")
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
-        if GUI_iterater == 9:
-            altQueue.put(data[6])
+        altQueue.put(data[6])
     else:
         print("IDK homie this shouldnt happen")
 
@@ -234,7 +229,7 @@ def main():
                     else:
                         print("CHECKSUM INVALID IGNORING DATA")
                     GUI_iterater += 1
-                    if GUI_iterater == 10:
+                    if GUI_iterater == 5:
                         GUI_iterater = 0
                     print("\n")
                     state = "initial"
