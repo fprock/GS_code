@@ -64,8 +64,10 @@ compAltFile.write("0\n")
 dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
 
+global GUI_iterater
+GUI_iterater = 0
 
-def logData(dataType_count, data):
+def logData(dataType_count, data, GUI_iterater):
     if dataType_count == 0:
         print("Raw Pressure: " + str(data[0]))
         rawPresFile.write("Raw Pressure: " + str(data[0]) + "\n")
@@ -87,17 +89,20 @@ def logData(dataType_count, data):
         print("Calculated Temperature(C): " + str(data[4]))
         compTempFile.write(str(data[4]) + "\n")
         dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
-        tempQueue.put(data[4])
+        if GUI_iterater == 9:
+            tempQueue.put(data[4])
     elif dataType_count == 5:
         print("Calculated Humidity(%): " + str(data[5]))
         compHumFile.write(str(data[5]) + "\n")
         dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
-        humQueue.put(data[5])
+        if GUI_iterater == 9:
+            humQueue.put(data[5])
     elif dataType_count == 6:
         print("Calculated Altitude: " + str(data[6]))
         compAltFile.write(str(data[6]) + "\n")
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
-        altQueue.put(data[6])
+        if GUI_iterater == 9:
+            altQueue.put(data[6])
     else:
         print("IDK homie this shouldnt happen")
 
@@ -117,6 +122,8 @@ Importer.start()
 GUI = mp.Process(target=GUI_GO)
 GUI.start()
 
+
+
 def main():
     state = "initial"
     baro_state = "payloadLength"
@@ -132,6 +139,7 @@ def main():
     gps_bytes = []
     gpsByte_string = ""
     baroChecksum = []
+    GUI_iterater = 0
 
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
@@ -221,9 +229,12 @@ def main():
                 if baroChecksumCount == 2:
                     if validateBaroChecksum(baroBytes, baroChecksum):
                         for i in range(0, 7):
-                            logData(i, data)
+                            logData(i, data, GUI_iterater)
                     else:
                         print("CHECKSUM INVALID IGNORING DATA")
+                    GUI_iterater += 1
+                    if GUI_iterater == 10:
+                        GUI_iterater = 0
                     print("\n")
                     state = "initial"
                     data = []
