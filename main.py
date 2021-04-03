@@ -32,19 +32,19 @@ def validateBaroChecksum(Baro_Bytes, Baro_checksumBytes):
         return True
     else:
         print("Barometer Checksum invalid")
-        return True
+        return False
 
 
-rawPresFilePath = "logs/RawPresLog.txt"
-compPresFilePath = "logs/CompPresLog.txt"
-rawTempFilePath = "logs/RawTempLog.txt"
-compTempFilePath = "logs/CompTempLog.txt"
-rawHumFilePath = "logs/RawHumLog.txt"
-compHumFilePath = "logs/CompHumLog.txt"
-compAltFilePath = "logs/CompAltLog.txt"
+rawPresFilePath = "logs/decoded/RawPresLog.txt"
+compPresFilePath = "logs/decoded/CompPresLog.txt"
+rawTempFilePath = "logs/decoded/RawTempLog.txt"
+compTempFilePath = "logs/decoded/CompTempLog.txt"
+rawHumFilePath = "logs/decoded/RawHumLog.txt"
+compHumFilePath = "logs/decoded/CompHumLog.txt"
+compAltFilePath = "logs/decoded/CompAltLog.txt"
 baroMsgsFilePath = "HexFile.txt"
-dataLogFilePath = "logs/data.txt"
-byteLogFilePath = "logs/byteLog.txt"
+dataLogFilePath = "logs/decoded/data.txt"
+byteLogFilePath = "logs/decoded/byteLog.txt"
 
 rawPresFile = open(rawPresFilePath, "w")
 rawPresFile.write("Received Raw Pressure Values\n")

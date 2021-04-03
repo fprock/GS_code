@@ -7,6 +7,7 @@ import numpy as np
 import multiprocessing as mp
 
 global GPSQueue, presQueue, tempQueue, humQueue, altQueue, cond, pres_data, temp_data, alt_data, hum_data
+global gps_en, gps_out, gps_data
 GPSQueue = mp.Queue()
 presQueue = mp.Queue()
 tempQueue = mp.Queue()
@@ -17,14 +18,25 @@ pres_data = np.array([])
 temp_data = np.array([])
 alt_data = np.array([])
 hum_data = np.array([])
+gps_data = np.str_()
+gps_en = False
 
 def GUI_GO():
     
+    def start_gps():
+        global gps_en
+        gps_en = True
+
+
+    def stop_gps():
+        global gps_en
+        gps_en = False
 
     def pop_gps():
+        global gps_data, gps_en, gps_out
         root1 = tk.Tk()
         root1.title("GPS Coordinates")
-        root1.geometry("300x450")
+        root1.geometry("1300")
         gps_out = Text(root1, width=20, height=40)
         gps_out.pack(pady=10)
         teststring = "    GPS Coordinates    "
@@ -38,7 +50,6 @@ def GUI_GO():
             #Plot Pressure
             pres_float = presQueue.get()
             atm_float = pres_float / 101325
-            #print("pressure float = " + str(pres_float))
             if len(pres_data) < 100:
                 pres_data = np.append(pres_data, atm_float)
             else:
@@ -50,7 +61,6 @@ def GUI_GO():
 
             #Plot Altitude
             alt_float = altQueue.get()
-            #print("alt float = " + str(alt_float))
             if len(alt_data) < 100:
                 alt_data = np.append(alt_data, alt_float)
             else:
@@ -62,7 +72,6 @@ def GUI_GO():
 
             #Plot Temperature
             temp_float = tempQueue.get()
-            #print("temp float = " + str(temp_float))
             if len(temp_data) < 100:
                 temp_data = np.append(temp_data, temp_float)
             else:
@@ -74,7 +83,6 @@ def GUI_GO():
 
             #Plot Humidity
             hum_float = humQueue.get()
-            #print("hum float = " + str(hum_float))
             if len(hum_data) < 100:
                 hum_data = np.append(hum_data, hum_float)
             else:
@@ -107,7 +115,6 @@ def GUI_GO():
     fig, ((ax,ax1),(ax2,ax3)) = plt.subplots(nrows=2,ncols=2)
 
     # Pressure Plot Config
-    # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax.set_title('Barometric Pressure')
     ax.set_xlabel('Sample')
     ax.set_ylabel('Pressure (atm)')
@@ -116,7 +123,6 @@ def GUI_GO():
     lines = ax.plot([], [])[0]
 
     # Altitude Plot Config
-    # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax1.set_title('Altitude')
     ax1.set_xlabel('Sample')
     ax1.set_ylabel('Altitude (m)')
@@ -125,7 +131,6 @@ def GUI_GO():
     lines1 = ax1.plot([], [])[0]
 
     # Temperature Plot Configuration
-    # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax2.set_title('Temperature')
     ax2.set_xlabel('Sample')
     ax2.set_ylabel('Temperature (C)')
@@ -134,7 +139,6 @@ def GUI_GO():
     lines2 = ax2.plot([], [])[0]
 
     # Humidity Plot Configuration
-    # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax3.set_title('Humidity')
     ax3.set_xlabel('Sample')
     ax3.set_ylabel('Humidity (%)')
@@ -161,10 +165,6 @@ def GUI_GO():
     root.update()
     stop = tk.Button(root, text="GPS Readouts", font=('calbiri', 12), command=lambda: pop_gps())
     stop.place(x=950, y=20)
-
-    # Configure Serial Port
-    # s = sr.Serial('COM8', 115200)
-    # s.reset_input_buffer()
 
     root.after(1, plot_all)
 

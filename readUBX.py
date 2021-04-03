@@ -91,10 +91,10 @@ def persePVT(ackPacket):
     byteoffset = 11
     bytevalue = bytes.decode(ackPacket[byteoffset])
     validbits = bin(int(bytevalue, 16)).zfill(8)
-    pospvt["Valid Date"] = validbits[9]
-    pospvt["Valid Time"] = validbits[8]
-    pospvt["Fully Resolved"] = validbits[7]
-    pospvt["Valid Mag"] = validbits[6]
+    pospvt["Valid Date"] = validbits[7]
+    pospvt["Valid Time"] = validbits[6]
+    pospvt["Fully Resolved"] = validbits[5]
+    pospvt["Valid Mag"] = validbits[4]
 
     # time accuracy esitmate
     byteoffset = 12
@@ -128,17 +128,19 @@ def persePVT(ackPacket):
 
     # PosLon
     byteoffset = 24
+    bytevalue = ""
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["Longitude"] = int.from_bytes(bytevalue, "little", signed=True) * 10 ^ -7
+    pospvt["Longitude"] = (int.from_bytes(bytevalue, "little", signed=True) * 10**-7)
 
     # PosLat
     byteoffset = 28
+    bytevalue = ""
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["Latitude"] = int.from_bytes(bytevalue, "little", signed=True) * 10 ^ -7
+    pospvt["Latitude"] = (int.from_bytes(bytevalue, "little", signed=True) * 10**-7)
 
     # posHeight
     byteoffset = 32
@@ -166,6 +168,6 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["headMot"] = int.from_bytes(bytevalue, "little", signed=True)
+    pospvt["headMot"] = (int.from_bytes(bytevalue, "little", signed=True) * 10 ** -5)
 
     return pospvt
