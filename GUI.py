@@ -1,10 +1,13 @@
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
 import tkinter as tk
+from tkinter import *
 import numpy as np
 import multiprocessing as mp
 
-global presQueue, tempQueue, humQueue, altQueue, cond, pres_data, temp_data, alt_data, hum_data
+global GPSQueue, presQueue, tempQueue, humQueue, altQueue, cond, pres_data, temp_data, alt_data, hum_data
+GPSQueue = mp.Queue()
 presQueue = mp.Queue()
 tempQueue = mp.Queue()
 humQueue = mp.Queue()
@@ -17,44 +20,35 @@ hum_data = np.array([])
 
 def GUI_GO():
     
-    
-    def plot_pres():
-        global cond, pres_data
+
+    def pop_gps():
+        root1 = tk.Tk()
+        root1.title("GPS Coordinates")
+        root1.geometry("300x450")
+        gps_out = Text(root1, width=20, height=40)
+        gps_out.pack(pady=10)
+        teststring = "    GPS Coordinates    "
+        gps_out.insert(tk.END, teststring)
+        root1.mainloop()
+
+    def plot_all():
+        global cond, pres_data, alt_data, temp_data, hum_data, presQueue, tempQueue, humQueue, altQueue
         if cond:
+
+            #Plot Pressure
             pres_float = presQueue.get()
+            atm_float = pres_float / 101325
             #print("pressure float = " + str(pres_float))
             if len(pres_data) < 100:
-                pres_data = np.append(pres_data, pres_float)
+                pres_data = np.append(pres_data, atm_float)
             else:
                 pres_data[0:99] = pres_data[1:100]
-                pres_data[99] = pres_float
+                pres_data[99] = atm_float
 
             lines.set_xdata(np.arange(0, len(pres_data)))
             lines.set_ydata(pres_data)
 
-            canvas.draw()
-        
-
-    def plot_temp():
-        global cond, temp_data
-        if cond:
-            temp_float = tempQueue.get()
-            #print("temp float = " + str(temp_float))
-            if len(temp_data) < 100:
-                temp_data = np.append(temp_data, temp_float)
-            else:
-                temp_data[0:99] = temp_data[1:100]
-                temp_data[99] = temp_float
-
-            lines2.set_xdata(np.arange(0, len(temp_data)))
-            lines2.set_ydata(temp_data)
-
-            canvas2.draw()
-
-
-    def plot_alt():
-        global cond, alt_data
-        if cond:
+            #Plot Altitude
             alt_float = altQueue.get()
             #print("alt float = " + str(alt_float))
             if len(alt_data) < 100:
@@ -66,12 +60,19 @@ def GUI_GO():
             lines1.set_xdata(np.arange(0, len(alt_data)))
             lines1.set_ydata(alt_data)
 
-            canvas1.draw()
+            #Plot Temperature
+            temp_float = tempQueue.get()
+            #print("temp float = " + str(temp_float))
+            if len(temp_data) < 100:
+                temp_data = np.append(temp_data, temp_float)
+            else:
+                temp_data[0:99] = temp_data[1:100]
+                temp_data[99] = temp_float
 
+            lines2.set_xdata(np.arange(0, len(temp_data)))
+            lines2.set_ydata(temp_data)
 
-    def plot_hum():
-        global cond, hum_data
-        if cond:
+            #Plot Humidity
             hum_float = humQueue.get()
             #print("hum float = " + str(hum_float))
             if len(hum_data) < 100:
@@ -83,14 +84,8 @@ def GUI_GO():
             lines3.set_xdata(np.arange(0, len(hum_data)))
             lines3.set_ydata(hum_data)
 
-            canvas3.draw()
+            canvas.draw()
 
-
-    def plot_all():
-        plot_pres()
-        plot_alt()
-        plot_temp()
-        plot_hum()
         root.after(1, plot_all)
 
     def start_plot():
@@ -107,10 +102,11 @@ def GUI_GO():
     root.configure(background='light blue')
     root.geometry("1600x800")
 
-    # Barometric Pressure Plot Configuration
-    fig = Figure()
-    ax = fig.add_subplot(111)
+    # Figure Settings  
+    plt.style.use('seaborn')
+    fig, ((ax,ax1),(ax2,ax3)) = plt.subplots(nrows=2,ncols=2)
 
+    # Pressure Plot Config
     # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax.set_title('Barometric Pressure')
     ax.set_xlabel('Sample')
@@ -119,14 +115,7 @@ def GUI_GO():
     ax.set_ylim(0.98, 1)
     lines = ax.plot([], [])[0]
 
-    canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
-    canvas.get_tk_widget().place(x=10, y=0, width=500, height=400)
-    canvas.draw()
-
-    # Altitude Plot Configuration
-    fig1 = Figure()
-    ax1 = fig1.add_subplot(111)
-
+    # Altitude Plot Config
     # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax1.set_title('Altitude')
     ax1.set_xlabel('Sample')
@@ -135,14 +124,7 @@ def GUI_GO():
     ax1.set_ylim(12, 20)
     lines1 = ax1.plot([], [])[0]
 
-    canvas1 = FigureCanvasTkAgg(fig1, master=root)  # A tk.DrawingArea.
-    canvas1.get_tk_widget().place(x=950, y=0, width=600, height=400)
-    canvas1.draw()
-
     # Temperature Plot Configuration
-    fig2 = Figure()
-    ax2 = fig2.add_subplot(111)
-
     # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax2.set_title('Temperature')
     ax2.set_xlabel('Sample')
@@ -151,13 +133,7 @@ def GUI_GO():
     ax2.set_ylim(15, 45)
     lines2 = ax2.plot([], [])[0]
 
-    canvas2 = FigureCanvasTkAgg(fig2, master=root)  # A tk.DrawingArea.
-    canvas2.get_tk_widget().place(x=10, y=400, width=500, height=400)
-    canvas2.draw()
     # Humidity Plot Configuration
-    fig3 = Figure()
-    ax3 = fig3.add_subplot(111)
-
     # ax = plt.axes(xlim=(0,100),ylim=(0, 120)); #displaying only 100 samples
     ax3.set_title('Humidity')
     ax3.set_xlabel('Sample')
@@ -166,13 +142,12 @@ def GUI_GO():
     ax3.set_ylim(0, 100)
     lines3 = ax3.plot([], [])[0]
 
-    canvas3 = FigureCanvasTkAgg(fig3, master=root)  # A tk.DrawingArea.
-    canvas3.get_tk_widget().place(x=950, y=400, width=600, height=400)
-    canvas3.draw()
+    plt.tight_layout()
 
-    #GPS Text Out
-    gps_out = Text(root, width = 30, height = 20)
-    gps_out.pack(pady = 60)
+    canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
+    canvas.get_tk_widget().place(x=10, y=0, width=1600, height=800)
+    canvas.draw()
+
     # Start and Stop Buttons
     root.update()
     start = tk.Button(root, text="Begin Plotting", font=('calbiri', 12), command=lambda: start_plot())
@@ -182,6 +157,15 @@ def GUI_GO():
     stop = tk.Button(root, text="Stop Plotting", font=('calbiri', 12), command=lambda: stop_plot())
     stop.place(x=start.winfo_x() + start.winfo_reqwidth() + 20, y=20)
 
-    root.after(0, plot_all)
+    #GPS Button
+    root.update()
+    stop = tk.Button(root, text="GPS Readouts", font=('calbiri', 12), command=lambda: pop_gps())
+    stop.place(x=950, y=20)
+
+    # Configure Serial Port
+    # s = sr.Serial('COM8', 115200)
+    # s.reset_input_buffer()
+
+    root.after(1, plot_all)
 
     root.mainloop()
