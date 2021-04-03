@@ -1,6 +1,7 @@
 import pprint
 import struct
 import binascii
+from bitarray import *
 
 def readUBX(readbytes):
     RELPOSNED = b'3c'
@@ -66,11 +67,10 @@ def persePVT(ackPacket):
 
     # iTOW
     byteoffset = 0
-    for i in range(0, 4):
-        tempBytes += bytes.decode(ackPacket[byteoffset + i])
-    print(tempBytes)
-    pospvt["iTOW"] = int(tempBytes, 16)
-    tempBytes = ""
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    pospvt["iTOW"] = int.from_bytes(bytevalue, "little", signed=False)
 
     # Year
     byteoffset = 4
@@ -87,61 +87,85 @@ def persePVT(ackPacket):
         pospvt[key] = int(bytevalue, 16)
         i += 1
 
-    #validity Flags
+    # validity Flags
     byteoffset = 11
-    print(ackPacket[byteoffset])
     bytevalue = bytes.decode(ackPacket[byteoffset])
-    print(bytevalue)
-    binary_string = binascii.unhexlify(bytevalue)
-    print(binary_string)
+    validbits = bin(int(bytevalue, 16)).zfill(8)
+    pospvt["Valid Date"] = validbits[9]
+    pospvt["Valid Time"] = validbits[8]
+    pospvt["Fully Resolved"] = validbits[7]
+    pospvt["Valid Mag"] = validbits[6]
+
+    # time accuracy esitmate
+    byteoffset = 12
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    pospvt["tAcc"] = int.from_bytes(bytevalue, "little", signed=False)
+
+    # Fraction of a second
+    byteoffset = 16
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    pospvt["nano"] = int.from_bytes(bytevalue, "big", signed=False)
+
+    #fix type
+    byteoffset = 20
+    bytevalue = bytes.decode(ackPacket[byteoffset])
+    if bytevalue == '00':
+        pospvt["Fix Type"] = "No Fix"
+    elif bytevalue == '01':
+        pospvt["Fix Type"] = "Dead reckoning only"
+    elif bytevalue == '02':
+        pospvt["Fix Type"] = "2D-Fix"
+    elif bytevalue == '03':
+        pospvt["Fix Type"] = "3D-Fix"
+    elif bytevalue == '04':
+        pospvt["Fix Type"] = "GNSS + Dead reckoning combined"
+    elif bytevalue == '05':
+        pospvt["Fix Type"] = "Time only fix"
 
     # PosLon
     byteoffset = 24
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-
-    print("lon Bytes: " + str(bytevalue))
-    pospvt["Longitude"] = int(bytevalue, 16)
+    pospvt["Longitude"] = int.from_bytes(bytevalue, "little", signed=True) * 10 ^ -7
 
     # PosLat
     byteoffset = 28
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("lat Bytes: " + str(bytevalue))
-    pospvt["Latitude"] = int(bytevalue, 16)
+    pospvt["Latitude"] = int.from_bytes(bytevalue, "little", signed=True) * 10 ^ -7
 
     # posHeight
     byteoffset = 32
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("height Bytes: " + str(bytevalue))
-    pospvt["Height"] = int(bytevalue, 16)
+    pospvt["Height"] = int.from_bytes(bytevalue, "little", signed=True)
 
     # Height above mean sea level
     byteoffset = 36
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("hMSL Bytes: " + str(bytevalue))
-    pospvt["hMSL"] = int(bytevalue, 16)
+    pospvt["hMSL"] = int.from_bytes(bytevalue, "little", signed=True)
 
     # Ground Speed
     byteoffset = 60
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("gSpeed Bytes: " + str(bytevalue))
-    pospvt["gSpeed"] = int(bytevalue, 16)
+    pospvt["gSpeed"] = int.from_bytes(bytevalue, "little", signed=True)
 
     # Heading of motion
     byteoffset = 64
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print("headMot Bytes: " + str(bytevalue))
-    pospvt["headMot"] = int(bytevalue, 16)
+    pospvt["headMot"] = int.from_bytes(bytevalue, "little", signed=True)
 
     return pospvt
