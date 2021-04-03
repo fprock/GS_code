@@ -254,8 +254,10 @@ def main():
                 if i == 100:
                     state = "initial"
                     GPSdict = readUBX(gps_bytes)
+                    dataFile.write("\nGPS DATA:\n")
                     for key, value in GPSdict.items():
                         print(key + ":", value)
+                        dataFile.write(str(key) + ": " + str(value) + "\n")
                     print("\n")
                     gps_bytes = []
                     gpsByte_string = ""
