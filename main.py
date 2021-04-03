@@ -5,7 +5,7 @@ from threading import *
 from datetime import datetime
 from importer import *
 from importer import receiver
-from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue
+from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue, GPSQueue
 from readUBX import *
 
 
@@ -250,6 +250,7 @@ def main():
                     state = "initial"
                     GPSdict = readUBX(gps_bytes)
                     dataFile.write("\nGPS DATA:\n")
+                    GPSQueue.put(GPSdict)
                     for key, value in GPSdict.items():
                         print(key + ":", value)
                         dataFile.write(str(key) + ": " + str(value) + "\n")

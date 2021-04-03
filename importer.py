@@ -1,12 +1,14 @@
 import serial
 from multiprocessing import Pipe
 from codecs import *
-from datetime import *
+from datetime import datetime
+
 global receiver
 sender, receiver = Pipe()
 
 
 def importSerial(SerOrLog):
+
     if not SerOrLog:
         ser = serial.Serial('/dev/ttyUSB0', 9600)
         ser.flushInput()
