@@ -1,6 +1,7 @@
 import sys
 import argparse
 import multiprocessing as mp
+from threading import *
 from datetime import datetime
 from importer import *
 from importer import receiver
@@ -115,11 +116,11 @@ parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
 
 serOrFile = args.d
-Importer = mp.Process(target=importSerial, args=(serOrFile,))
+Importer = Thread(target=importSerial, args=(serOrFile,))
 Importer.start()
 
 
-GUI = mp.Process(target=GUI_GO)
+GUI = Thread(target=GUI_GO)
 GUI.start()
 
 
@@ -270,7 +271,6 @@ def main():
 try:
     main()
 except KeyboardInterrupt:
-    # GUI.join()
     Importer.join()
     GUI.join()
     rawPresFile.close()
