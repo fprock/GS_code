@@ -7,6 +7,7 @@ import numpy as np
 import multiprocessing as mp
 
 global GPSQueue, presQueue, tempQueue, humQueue, altQueue, cond, pres_data, temp_data, alt_data, hum_data
+global gps_en, gps_data, gps_out
 GPSQueue = mp.Queue()
 presQueue = mp.Queue()
 tempQueue = mp.Queue()
@@ -17,19 +18,58 @@ pres_data = np.array([])
 temp_data = np.array([])
 alt_data = np.array([])
 hum_data = np.array([])
+gps_en = False
+gps_data = np.str_([])
 
 def GUI_GO():
     
 
     def pop_gps():
+        global gps_en, gps_data, gps_out, GPSQueue
         root1 = tk.Tk()
         root1.title("GPS Coordinates")
-        root1.geometry("300x450")
-        gps_out = Text(root1, width=20, height=40)
+        root1.geometry("3300x450")
+        scrollbar = tk.Scrollbar(root1)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        gps_out = Text(root1, width=130, height=20)
         gps_out.pack(pady=10)
-        teststring = "    GPS Coordinates    "
+        teststring = "---------------------------------------------------------GPS Coordinates----------------------------------------------------------"
         gps_out.insert(tk.END, teststring)
+        gps_out.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=gps_out.yview)
+
+        root1.update()
+        start_gpsbutton = tk.Button(root1, text="Get Coordinates", font=('calbiri', 12), command=lambda: start_gps())
+        start_gpsbutton.place(x=2900, y=100)
+
+        root1.update()
+        stop_gpsbutton = tk.Button(root1, text="Pause", font=('calbiri', 12), command=lambda: stop_gps())
+        stop_gpsbutton.place(x=2970, y=160)
+
+        def write_gps():
+            global gps_en, gps_data, gps_out, GPSQueue
+            if gps_en:
+                #gps_in = GPSQueue.get()
+                #for key, val in gps_in.items():
+                    #gps_key = str(key)
+                    #gps_val = str(val)
+
+                gps_key = "test"
+                gps_val = "testing"
+                gps_out.insert(tk.END, gps_key + ":" + gps_val + "\n")
+
+            root1.after(500, write_gps)
+
+        root1.after(500, write_gps)
         root1.mainloop()
+
+    def start_gps():
+        global gps_en
+        gps_en = True
+
+    def stop_gps():
+        global gps_en
+        gps_en = False
 
     def plot_all():
         global cond, pres_data, alt_data, temp_data, hum_data, presQueue, tempQueue, humQueue, altQueue
@@ -37,7 +77,7 @@ def GUI_GO():
 
             #Plot Pressure
             pres_float = presQueue.get()
-            atm_float = pres_float / 101325
+            atm_float = pres_float
             #print("pressure float = " + str(pres_float))
             if len(pres_data) < 100:
                 pres_data = np.append(pres_data, atm_float)
@@ -100,7 +140,8 @@ def GUI_GO():
     root = tk.Tk()
     root.title('FPRock Live Data')
     root.configure(background='light blue')
-    root.geometry("1600x800")
+    #root.geometry("1600x800")
+    root.geometry("3840x2160")
 
     # Figure Settings  
     plt.style.use('seaborn')
@@ -142,16 +183,16 @@ def GUI_GO():
     ax3.set_ylim(0, 100)
     lines3 = ax3.plot([], [])[0]
 
-    plt.tight_layout()
+    #plt.tight_layout()
 
     canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
-    canvas.get_tk_widget().place(x=10, y=0, width=1600, height=800)
+    canvas.get_tk_widget().place(x=0, y=0, width=3840, height=1500)
     canvas.draw()
 
     # Start and Stop Buttons
     root.update()
     start = tk.Button(root, text="Begin Plotting", font=('calbiri', 12), command=lambda: start_plot())
-    start.place(x=625, y=20)
+    start.place(x=1625, y=20)
 
     root.update()
     stop = tk.Button(root, text="Stop Plotting", font=('calbiri', 12), command=lambda: stop_plot())
@@ -160,7 +201,7 @@ def GUI_GO():
     #GPS Button
     root.update()
     stop = tk.Button(root, text="GPS Readouts", font=('calbiri', 12), command=lambda: pop_gps())
-    stop.place(x=950, y=20)
+    stop.place(x=2175, y=20)
 
     # Configure Serial Port
     # s = sr.Serial('COM8', 115200)
