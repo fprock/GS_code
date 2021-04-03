@@ -1,10 +1,11 @@
 import sys
 import argparse
 import multiprocessing as mp
+from threading import *
 from datetime import datetime
 from importer import *
 from importer import receiver
-from GUI import GUI_GO, presSend, tempSend, humSend, altSend
+from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue
 from readUBX import *
 
 
@@ -26,8 +27,6 @@ def validateBaroChecksum(Baro_Bytes, Baro_checksumBytes):
         CK_B = CK_B + CK_A
     CK_A &= 0xff
     CK_B &= 0xff
-    print("Cal CK_A = " + str(CK_A) + " Actual CH_A = " + str(int(Baro_checksumBytes[0], 16)) + " Cal CK_B = " + str(
-        CK_B) + " Actual CH_B = " + str(int(Baro_checksumBytes[1], 16)))
     if (CK_A == int(Baro_checksumBytes[0], 16)) and (CK_B == int(Baro_checksumBytes[1], 16)):
         print("Barometer Checksum valid")
         return True
@@ -64,8 +63,10 @@ compAltFile.write("0\n")
 dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
 
+global GUI_iterater
+GUI_iterater = 0
 
-def logData(dataType_count, data):
+def logData(dataType_count, data, GUI_iterater):
     if dataType_count == 0:
         print("Raw Pressure: " + str(data[0]))
         rawPresFile.write("Raw Pressure: " + str(data[0]) + "\n")
@@ -82,22 +83,22 @@ def logData(dataType_count, data):
         print("Calculated Pressure(Pa): " + str(data[3]))
         compPresFile.write(str(data[3]) + "\n")
         dataFile.write("Calculated Pressure(Pa): " + str(data[3]) + "\n")
-        presSend.send(data)
+        presQueue.put(data[3])
     elif dataType_count == 4:
         print("Calculated Temperature(C): " + str(data[4]))
         compTempFile.write(str(data[4]) + "\n")
         dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
-        tempSend.send(data)
+        tempQueue.put(data[4])
     elif dataType_count == 5:
         print("Calculated Humidity(%): " + str(data[5]))
         compHumFile.write(str(data[5]) + "\n")
         dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
-        humSend.send(data)
+        humQueue.put(data[5])
     elif dataType_count == 6:
         print("Calculated Altitude: " + str(data[6]))
         compAltFile.write(str(data[6]) + "\n")
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
-        altSend.send(data)
+        altQueue.put(data[6])
     else:
         print("IDK homie this shouldnt happen")
 
@@ -110,12 +111,14 @@ parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
 
 serOrFile = args.d
-Importer = mp.Process(target=importSerial, args=(serOrFile,))
+Importer = Thread(target=importSerial, args=(serOrFile,))
 Importer.start()
 
 
-# GUI = mp.Process(target=GUI_GO)
-# GUI.start()
+GUI = Thread(target=GUI_GO)
+GUI.start()
+
+
 
 def main():
     state = "initial"
@@ -132,6 +135,7 @@ def main():
     gps_bytes = []
     gpsByte_string = ""
     baroChecksum = []
+    GUI_iterater = 0
 
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
@@ -221,9 +225,12 @@ def main():
                 if baroChecksumCount == 2:
                     if validateBaroChecksum(baroBytes, baroChecksum):
                         for i in range(0, 7):
-                            logData(i, data)
+                            logData(i, data, GUI_iterater)
                     else:
                         print("CHECKSUM INVALID IGNORING DATA")
+                    GUI_iterater += 1
+                    if GUI_iterater == 5:
+                        GUI_iterater = 0
                     print("\n")
                     state = "initial"
                     data = []
@@ -242,8 +249,10 @@ def main():
                 if i == 100:
                     state = "initial"
                     GPSdict = readUBX(gps_bytes)
+                    dataFile.write("\nGPS DATA:\n")
                     for key, value in GPSdict.items():
                         print(key + ":", value)
+                        dataFile.write(str(key) + ": " + str(value) + "\n")
                     print("\n")
                     gps_bytes = []
                     gpsByte_string = ""
@@ -259,8 +268,8 @@ def main():
 try:
     main()
 except KeyboardInterrupt:
-    # GUI.join()
     Importer.join()
+    GUI.join()
     rawPresFile.close()
     compPresFile.close()
     rawTempFile.close()

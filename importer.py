@@ -1,17 +1,17 @@
 import serial
 from multiprocessing import Pipe
 from codecs import *
-from datetime import datetime
-
+from datetime import *
 global receiver
 sender, receiver = Pipe()
 
 
 def importSerial(SerOrLog):
     if not SerOrLog:
-        ser = serial.Serial('/dev/ttyUSB1', 9600)
+        ser = serial.Serial('/dev/ttyUSB0', 9600)
         ser.flushInput()
         ser.flushOutput()
+
     byteFile = open("logs/ByteFile.txt", 'w')
     hexFile = open("logs/HexFile.txt", 'w')
     dataFile = open("Testdata.txt", "r")

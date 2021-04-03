@@ -67,10 +67,10 @@ def persePVT(ackPacket):
 
     # iTOW
     byteoffset = 0
-    for i in range(0, 4):
-        tempBytes += bytes.decode(ackPacket[byteoffset + i])
-    pospvt["iTOW"] = int(tempBytes, 16)
-    tempBytes = ""
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    pospvt["iTOW"] = int.from_bytes(bytevalue, "little", signed=False)
 
     # Year
     byteoffset = 4
@@ -101,29 +101,29 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print(bytevalue)
+    pospvt["tAcc"] = int.from_bytes(bytevalue, "little", signed=False)
 
     # Fraction of a second
     byteoffset = 16
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print(bytevalue)
+    pospvt["nano"] = int.from_bytes(bytevalue, "big", signed=False)
 
     #fix type
     byteoffset = 20
     bytevalue = bytes.decode(ackPacket[byteoffset])
-    if int(bytevalue[1]) == 0:
+    if bytevalue == '00':
         pospvt["Fix Type"] = "No Fix"
-    elif int(bytevalue[1]) == 1:
+    elif bytevalue == '01':
         pospvt["Fix Type"] = "Dead reckoning only"
-    elif int(bytevalue[1]) == 2:
+    elif bytevalue == '02':
         pospvt["Fix Type"] = "2D-Fix"
-    elif int(bytevalue[1]) == 3:
+    elif bytevalue == '03':
         pospvt["Fix Type"] = "3D-Fix"
-    elif int(bytevalue[1]) == 6:
+    elif bytevalue == '04':
         pospvt["Fix Type"] = "GNSS + Dead reckoning combined"
-    elif int(bytevalue[1]) == 5:
+    elif bytevalue == '05':
         pospvt["Fix Type"] = "Time only fix"
 
     # PosLon
@@ -131,48 +131,41 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-
-    #print("lon Bytes: " + str(bytevalue))
-    pospvt["Longitude"] = int(bytevalue, 16)
+    pospvt["Longitude"] = int.from_bytes(bytevalue, "little", signed=True) * 10 ^ -7
 
     # PosLat
     byteoffset = 28
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("lat Bytes: " + str(bytevalue))
-    pospvt["Latitude"] = int(bytevalue, 16)
+    pospvt["Latitude"] = int.from_bytes(bytevalue, "little", signed=True) * 10 ^ -7
 
     # posHeight
     byteoffset = 32
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("height Bytes: " + str(bytevalue))
-    pospvt["Height"] = int(bytevalue, 16)
+    pospvt["Height"] = int.from_bytes(bytevalue, "little", signed=True)
 
     # Height above mean sea level
     byteoffset = 36
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("hMSL Bytes: " + str(bytevalue))
-    pospvt["hMSL"] = int(bytevalue, 16)
+    pospvt["hMSL"] = int.from_bytes(bytevalue, "little", signed=True)
 
     # Ground Speed
     byteoffset = 60
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("gSpeed Bytes: " + str(bytevalue))
-    pospvt["gSpeed"] = int(bytevalue, 16)
+    pospvt["gSpeed"] = int.from_bytes(bytevalue, "little", signed=True)
 
     # Heading of motion
     byteoffset = 64
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("headMot Bytes: " + str(bytevalue))
-    pospvt["headMot"] = int(bytevalue, 16)
+    pospvt["headMot"] = int.from_bytes(bytevalue, "little", signed=True)
 
     return pospvt
