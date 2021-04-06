@@ -40,10 +40,11 @@ def GUI_GO():
         global gps_en, gps_data, gps_out, GPSQueue
         root1 = tk.Tk()
         root1.title("GPS Coordinates")
-        root1.geometry("3300x450")
+        #root1.geometry("3300x450") -- 4k
+        root.geometry("1900x500")
         scrollbar = tk.Scrollbar(root1)
         scrollbar.pack(side=RIGHT, fill=Y)
-        gps_out = Text(root1, width=130, height=20)
+        gps_out = Text(root1, width=130, height=15)
 
         gps_out.pack(pady=10)
         teststring = "---------------------------------------------------------GPS Coordinates----------------------------------------------------------"
@@ -53,36 +54,32 @@ def GUI_GO():
 
         root1.update()
         start_gpsbutton = tk.Button(root1, text="Get Coordinates", font=('calbiri', 12), command=lambda: start_gps())
-        start_gpsbutton.place(x=2900, y=100)
+        #start_gpsbutton.place(x=2900, y=100) --4k
+        start_gpsbutton.place(x=450,y=280)
 
         root1.update()
         stop_gpsbutton = tk.Button(root1, text="Pause", font=('calbiri', 12), command=lambda: stop_gps())
-        stop_gpsbutton.place(x=2970, y=160)
+        #stop_gpsbutton.place(x=2970, y=160)
+        stop_gpsbutton.place(x=500,y=320)
 
         def write_gps():
             global gps_en, gps_data, gps_out, GPSQueue
             if gps_en:
-                #gps_in = GPSQueue.get()
-                #for key, val in gps_in.items():
-                    #gps_key = str(key)
-                    #gps_val = str(val)
-
-                gps_key = "test"
-                gps_val = "testing"
-                gps_out.insert(tk.END, gps_key + ":" + gps_val + "\n")
+                gps_in = GPSQueue.get()
+                for key, val in gps_in.items():
+                    gps_key = str(key)
+                    gps_val = str(val)
+                    gps_out.insert(tk.END, gps_key + ":" + gps_val + "\n")
+                    
+                gps_out.insert(tk.END, "------------------------------\n")
+                #gps_key = "test"
+                #gps_val = "testing"
+                
 
             root1.after(500, write_gps)
 
         root1.after(500, write_gps)
         root1.mainloop()
-
-    def start_gps():
-        global gps_en
-        gps_en = True
-
-    def stop_gps():
-        global gps_en
-        gps_en = False
 
     def plot_all():
         global cond, pres_data, alt_data, temp_data, hum_data, presQueue, tempQueue, humQueue, altQueue
@@ -151,8 +148,8 @@ def GUI_GO():
     root = tk.Tk()
     root.title('FPRock Live Data')
     root.configure(background='light blue')
-    #root.geometry("1600x800")
-    root.geometry("3840x2160")
+    root.geometry("1920x800")
+    #root.geometry("3840x2160")
 
     # Figure Settings  
     plt.style.use('seaborn')
@@ -161,9 +158,9 @@ def GUI_GO():
     # Pressure Plot Config
     ax.set_title('Barometric Pressure')
     ax.set_xlabel('Sample')
-    ax.set_ylabel('Pressure (atm)')
-    ax.set_xlim(0, 100)
-    ax.set_ylim(0.98, 1)
+    ax.set_ylabel('Pressure (Pa)')
+    ax.set_xlim(0,100)
+    ax.set_ylim(100000,110000)
     lines = ax.plot([], [])[0]
 
     # Altitude Plot Config
@@ -171,7 +168,7 @@ def GUI_GO():
     ax1.set_xlabel('Sample')
     ax1.set_ylabel('Altitude (m)')
     ax1.set_xlim(0, 100)
-    ax1.set_ylim(12, 20)
+    ax1.set_ylim(0, 2000)
     lines1 = ax1.plot([], [])[0]
 
     # Temperature Plot Configuration
@@ -179,7 +176,7 @@ def GUI_GO():
     ax2.set_xlabel('Sample')
     ax2.set_ylabel('Temperature (C)')
     ax2.set_xlim(0, 100)
-    ax2.set_ylim(15, 45)
+    ax2.set_ylim(10, 30)
     lines2 = ax2.plot([], [])[0]
 
     # Humidity Plot Configuration
@@ -190,25 +187,28 @@ def GUI_GO():
     ax3.set_ylim(0, 100)
     lines3 = ax3.plot([], [])[0]
 
-    #plt.tight_layout()
+    plt.tight_layout()
 
     canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
-    canvas.get_tk_widget().place(x=0, y=0, width=3840, height=1500)
+    #canvas.get_tk_widget().place(x=0, y=0, width=3840, height=1500) --4k
+    canvas.get_tk_widget().place(x=0, y=0, width=1920, height=600)
     canvas.draw()
 
     # Start and Stop Buttons
     root.update()
     start = tk.Button(root, text="Begin Plotting", font=('calbiri', 12), command=lambda: start_plot())
-    start.place(x=1625, y=20)
+    #start.place(x=1625, y=20)
+    start.place(x=725,y=0)
 
     root.update()
     stop = tk.Button(root, text="Stop Plotting", font=('calbiri', 12), command=lambda: stop_plot())
-    stop.place(x=start.winfo_x() + start.winfo_reqwidth() + 20, y=20)
+    stop.place(x=start.winfo_x() + start.winfo_reqwidth() + 20, y=0)
 
     #GPS Button
     root.update()
-    stop = tk.Button(root, text="GPS Readouts", font=('calbiri', 12), command=lambda: pop_gps())
-    stop.place(x=2175, y=20)
+    gpsbut = tk.Button(root, text="GPS Readouts", font=('calbiri', 12), command=lambda: pop_gps())
+    #gpsbut.place(x=1900, y=20)
+    gpsbut.place(x=1050, y=0)
 
     root.after(1, plot_all)
 
