@@ -3,20 +3,19 @@ import argparse
 import multiprocessing as mp
 from threading import *
 from datetime import datetime
-from importer import *
-from importer import receiver
+# from importer import *
+# from importer import receiver
 from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue, GPSQueue
 from readUBX import *
+
+from fakeserial import *
+from fakeserial import receiver
 
 
 def getTimeStamp():
     dateTimeObj = datetime.now()
     timestampStr = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
     return "Current Timestamp : " + timestampStr
-
-
-def fakeSerial(inputFile):
-    return inputFile.read(2)
 
 
 def validateBaroChecksum(Baro_Bytes, Baro_checksumBytes):
@@ -110,9 +109,13 @@ parser = argparse.ArgumentParser(description="Parse bool")
 parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
 
-serOrFile = args.d
-Importer = Thread(target=importSerial, args=(serOrFile,))
-Importer.start()
+# serOrFile = args.d
+# Importer = Thread(target=importSerial, args=(serOrFile,))
+# Importer.start()
+
+
+Fake = Thread(target=fakeserial, args=("HexFile_withtime.txt",))
+Fake.start()
 
 
 GUI = Thread(target=GUI_GO)
@@ -151,6 +154,7 @@ def main():
     while True:
         data_raw = ""
         data_raw = receiver.recv()
+        # print(data_raw)
         if len(data_raw) == 2:
             if data_raw == "BB" and state == "initial":  # First starting byte
                 print(getTimeStamp())
@@ -269,7 +273,8 @@ def main():
 try:
     main()
 except KeyboardInterrupt:
-    Importer.join()
+    # Importer.join()
+    Fake.join()
     GUI.join()
     rawPresFile.close()
     compPresFile.close()
