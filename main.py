@@ -68,8 +68,8 @@ GUI_iterater = 0
 def logData(dataType_count, data, GUI_iterater):
     if dataType_count == 0:
         print("Raw Pressure: " + str(data[0]))
-        rawPresFile.write("Raw Pressure: " + str(data[0]) + "\n")
-        dataFile.write("Raw Pressure: " + str(data[0]) + "\n")
+        rawPresFile.write("Raw Pressure: " + str(int(data[0])) + "\n")
+        dataFile.write("Raw Pressure: " + str(int(data[0])) + "\n")
     elif dataType_count == 1:
         print("Raw Temperature: " + str(data[1]))
         rawTempFile.write("Raw Temperature: " + str(data[1]) + "\n")
