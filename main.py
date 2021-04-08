@@ -65,17 +65,6 @@ byteFile = open(byteLogFilePath, "w")
 def decodeLogData(data):
     # raw pressure decoding and logging
     rawPresHex = ""
-    rawPresFile.flush()
-    rawTempFile.flush()
-    rawHumFile.flush()
-    compPresFile.flush()
-    compTempFile.flush()
-    compHumFile.flush()
-    compAltFile.flush()
-    dataFile.flush()
-
-    if len(data) != 28:
-        sys.exit()
     for i in range(0, 4):
         rawPresHex += data[i]
     rawPres = struct.unpack('<I', bytes.fromhex(rawPresHex))[0]
@@ -152,7 +141,7 @@ parser.add_argument("-G", '-GUI', default=False, action="store_true")
 args = parser.parse_args()
 
 if args.D:
-    Fake = Thread(target=fakeserial, args=("HexFile_withtime.txt",))
+    Fake = Thread(target=fakeserial, args=("logs/raw/HexFile_withtime.txt",))
     Fake.start()
 else:
     importer = Thread(target=importSerial)
