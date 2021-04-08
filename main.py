@@ -62,44 +62,74 @@ compAltFile.write("0\n")
 dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
 
-global GUI_iterater
-GUI_iterater = 0
 
-def logData(dataType_count, data, GUI_iterater):
-    if dataType_count == 0:
-        print("Raw Pressure: " + str(data[0]))
-        rawPresFile.write("Raw Pressure: " + str(int(data[0])) + "\n")
-        dataFile.write("Raw Pressure: " + str(int(data[0])) + "\n")
-    elif dataType_count == 1:
-        print("Raw Temperature: " + str(data[1]))
-        rawTempFile.write("Raw Temperature: " + str(data[1]) + "\n")
-        dataFile.write("Raw Temperature: " + str(data[1]) + "\n")
-    elif dataType_count == 2:
-        print("Raw Humidity: " + str(data[2]))
-        rawHumFile.write("Raw Humidity: " + str(data[2]) + "\n")
-        dataFile.write("Raw Humidity: " + str(data[2]) + "\n")
-    elif dataType_count == 3:
-        print("Calculated Pressure(Pa): " + str(data[3]))
-        compPresFile.write(str(data[3]) + "\n")
-        dataFile.write("Calculated Pressure(Pa): " + str(data[3]) + "\n")
-        presQueue.put(data[3])
-    elif dataType_count == 4:
-        print("Calculated Temperature(C): " + str(data[4]))
-        compTempFile.write(str(data[4]) + "\n")
-        dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
-        tempQueue.put(data[4])
-    elif dataType_count == 5:
-        print("Calculated Humidity(%): " + str(data[5]))
-        compHumFile.write(str(data[5]) + "\n")
-        dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
-        humQueue.put(data[5])
-    elif dataType_count == 6:
-        print("Calculated Altitude: " + str(data[6]))
-        compAltFile.write(str(data[6]) + "\n")
-        dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
-        altQueue.put(data[6])
-    else:
-        print("IDK homie this shouldnt happen")
+def decodeLogData(data):
+    # raw pressure decoding and logging
+    rawPresHex = ""
+    for i in range(0, 4):
+        rawPresHex += data[i]
+    rawPres = struct.unpack('<I', bytes.fromhex(rawPresHex))[0]
+    print("Raw Pressure: " + str(rawPres))
+    rawPresFile.write("Raw Pressure: " + str(rawPres) + "\n")
+    dataFile.write("Raw Pressure: " + str(rawPres) + "\n")
+
+    # Raw temp decoding and logging
+    rawTempHex = ""
+    for i in range(4, 8):
+        rawTempHex += data[i]
+    rawTemp = struct.unpack('<I', bytes.fromhex(rawTempHex))[0]
+    print("Raw Temperature: " + str(rawTemp))
+    rawTempFile.write("Raw Temperature: " + str(rawTemp) + "\n")
+    dataFile.write("Raw Temperature: " + str(rawTemp) + "\n")
+
+    # Raw humidity decoding and logging
+    rawHumHex = ""
+    for i in range(8, 12):
+        rawHumHex += data[i]
+    rawHum = struct.unpack('<I', bytes.fromhex(rawHumHex))[0]
+    print("Raw Humidity: " + str(rawHum))
+    rawHumFile.write("Raw Humidity: " + str(rawHum) + "\n")
+    dataFile.write("Raw Humidity: " + str(rawHum) + "\n")
+
+    # calculated pressure decode and logging
+    calPresHex = ""
+    for i in range(12, 16):
+        calPresHex += data[i]
+    calPres = struct.unpack('<f', bytes.fromhex(calPresHex))[0]
+    print("Calculated Pressure(Pa): " + str(calPres))
+    compPresFile.write(str(calPres) + "\n")
+    dataFile.write("Calculated Pressure(Pa): " + str(calPres) + "\n")
+    presQueue.put(calPres)
+
+    # calculated tempurature decoding and logging
+    calTempHex = ""
+    for i in range(16, 20):
+        calTempHex += data[i]
+    calTemp = struct.unpack('<f', bytes.fromhex(calTempHex))[0]
+    print("Calculated Temperature(C): " + str(calTemp))
+    compTempFile.write(str(calTemp) + "\n")
+    dataFile.write("Calculated Temperature(C): " + str(calTemp) + "\n")
+    tempQueue.put(calTemp)
+
+    # calculated humidity decoding and logging
+    calHumHex = ""
+    for i in range(20, 24):
+        calHumHex += data[i]
+    calHum = struct.unpack('<f', bytes.fromhex(calHumHex))[0]
+    print("Calculated Humidity(%): " + str(calHum))
+    compHumFile.write(str(calHum) + "\n")
+    dataFile.write("Calculated Humidity(%): " + str(calHum) + "\n")
+    humQueue.put(calHum)
+
+    # calculated altitude decoding and logging
+    calAltHex = ""
+    for i in range(24, 28):
+        calAltHex += data[i]
+    calAlt = struct.unpack('<f', bytes.fromhex(calAltHex))[0]
+    print("Calculated Altitude: " + str(calAlt))
+    compAltFile.write(str(calAlt) + "\n")
+    dataFile.write("Calculated Altitude(m): " + str(calAlt) + "\n")
+    altQueue.put(calAlt)
 
 
 print("*BEGINNING PROGRAM*\n\n")
@@ -109,12 +139,7 @@ parser = argparse.ArgumentParser(description="Parse bool")
 parser.add_argument("-d", '-development', default=False, action="store_true")
 args = parser.parse_args()
 
-# serOrFile = args.d
-# Importer = Thread(target=importSerial, args=(serOrFile,))
-# Importer.start()
-
-
-Fake = Thread(target=fakeserial, args=("HexFile_withtime.txt",))
+Fake = Thread(target=fakeserial, args=("logs/raw/HexFile_withtime.txt",))
 Fake.start()
 
 
@@ -122,16 +147,14 @@ GUI = Thread(target=GUI_GO)
 GUI.start()
 
 
-
 def main():
     state = "initial"
-    baro_state = "payloadLength"
+    baro_state = "payLoadLength"
     payLoadLenFlag = False
     payLoadLen = 0
     payLoadCount = 0
     dataCount = 0
     dataType_count = 1
-    convertingData = ""
     baroChecksumCount = 0
     data = []
     baroBytes = []
@@ -143,7 +166,7 @@ def main():
     if args.d:
         print("*ENTERING DEVELOPMENT MODE*\n")
         dataFile.write("*ENTERING DEVELOPMENT MODE*\n")
-        #baroMsgsFile = open(baroMsgsFilePath, "r")
+        # baroMsgsFile = open(baroMsgsFilePath, "r")
         print("READING FROM FILE\n")
         dataFile.write("READING FROM FILE\n")
     else:
@@ -152,9 +175,7 @@ def main():
         dataFile.write("READING FROM SERIAL\n")
 
     while True:
-        data_raw = ""
         data_raw = receiver.recv()
-        # print(data_raw)
         if len(data_raw) == 2:
             if data_raw == "BB" and state == "initial":  # First starting byte
                 print(getTimeStamp())
@@ -184,30 +205,33 @@ def main():
             elif state == "baroClass":
                 if baro_state == "payload":
                     baroBytes.append(data_raw)
-                    convertingData = data_raw + convertingData
-                    dataCount = dataCount + 1
-                    if dataCount == 4:
-                        data.append(struct.unpack('!f', bytes.fromhex(convertingData))[0])
-                        dataType_count = dataType_count + 1
-                        dataCount = 0
-                        convertingData = ""
                     payLoadCount = payLoadCount + 1
                     if payLoadCount == payLoadLen:
                         print("PAYLOAD READ IN")
                         dataFile.write("END OF PAYLOAD\n")
-                        state = "barochecksum"
-                        baro_state = "payloadLength"
+                        baro_state = "barochecksum"
                         baroChecksumCount = 0
-                        payLoadCount = 0
                         payLoadLen = 0
                         payLoadCount = 0
-                        dataType_count = 1
-                elif baro_state == "payloadLength":
-                    payLoadLenFlag = True
+                elif baro_state == "payLoadLength":
                     payLoadLen = int(data_raw, 16)
                     print("Barometer payload length is " + str(payLoadLen) + " bytes")
                     dataFile.write("Barometer payload length is " + str(payLoadLen) + " bytes\n")
                     baro_state = "payload"
+                elif baro_state == "barochecksum":
+                    baroChecksumCount = baroChecksumCount + 1
+                    baroChecksum.append(data_raw)
+                    if baroChecksumCount == 2:
+                        if validateBaroChecksum(baroBytes, baroChecksum):
+                            decodeLogData(baroBytes)
+                        else:
+                            print("CHECKSUM INVALID IGNORING DATA")
+                        print("\n")
+                        state = "initial"
+                        data = []
+                        baroBytes = []
+                        baroChecksum = []
+                        baro_state = "payLoadLength"
             elif state == "messageClass":
                 if payLoadLenFlag:
                     # message data conversion
@@ -218,28 +242,10 @@ def main():
                         dataFile.write("END OF PAYLOAD\n")
                         payLoadCount = 0
                 else:
-                    payLoadLenFlag = True
                     payLoadLen = int(data_raw, 16)
                     print("Message payload length is " + str(payLoadLen) + " bytes")
                     dataFile.write("Message payload length is " + str(payLoadLen) + " bytes\n")
                     baroBytes.append(data_raw)
-            elif state == "barochecksum":
-                baroChecksumCount = baroChecksumCount + 1
-                baroChecksum.append(data_raw)
-                if baroChecksumCount == 2:
-                    if validateBaroChecksum(baroBytes, baroChecksum):
-                        for i in range(0, 7):
-                            logData(i, data, GUI_iterater)
-                    else:
-                        print("CHECKSUM INVALID IGNORING DATA")
-                    GUI_iterater += 1
-                    if GUI_iterater == 5:
-                        GUI_iterater = 0
-                    print("\n")
-                    state = "initial"
-                    data = []
-                    baroBytes = []
-                    baroChecksum = []
             elif state == "initial" and data_raw == "B5":
                 print("Intercepting GPS data")
                 gpsByte_string = gpsByte_string + data_raw
@@ -265,7 +271,8 @@ def main():
                 print(
                     f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
                 dataFile.write(
-                    "ERROR: missing starting flag, discarding incoming data(" + str(data_raw) + ") and waiting till next start flags\n")
+                    "ERROR: missing starting flag, discarding incoming data(" + str(
+                        data_raw) + ") and waiting till next start flags\n")
         else:
             continue
 
