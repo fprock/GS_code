@@ -57,4 +57,4 @@ def fakeserial(input_file_path):
 
 
 if __name__ == '__main__':
-    fakeserial("HexFile_withtime.txt")
+    fakeserial("logs/raw/HexFile_withtime.txt")

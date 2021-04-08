@@ -3,11 +3,10 @@ import argparse
 import multiprocessing as mp
 from threading import *
 from datetime import datetime
-# from importer import *
+from importer import *
 # from importer import receiver
 from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue, GPSQueue
 from readUBX import *
-
 from fakeserial import *
 from fakeserial import receiver
 
@@ -136,15 +135,22 @@ print("*BEGINNING PROGRAM*\n\n")
 
 dataFile.write("*BEGINNING PROGRAM*\n\n")
 parser = argparse.ArgumentParser(description="Parse bool")
-parser.add_argument("-d", '-development', default=False, action="store_true")
+parser.add_argument("-D", '-development', default=False, action="store_true")
+parser.add_argument("-G", '-GUI', default=False, action="store_true")
+
 args = parser.parse_args()
 
-Fake = Thread(target=fakeserial, args=("logs/raw/HexFile_withtime.txt",))
-Fake.start()
+if args.D:
+    Fake = Thread(target=fakeserial, args=("logs/raw/HexFile_withtime.txt",))
+    Fake.start()
+else:
+    importer = Thread(target=importSerial)
+    importer.start()
 
-
-GUI = Thread(target=GUI_GO)
-GUI.start()
+if args.G:
+    print("OPENING GUI")
+    GUI = Thread(target=GUI_GO)
+    GUI.start()
 
 
 def main():
@@ -163,7 +169,7 @@ def main():
     baroChecksum = []
     GUI_iterater = 0
 
-    if args.d:
+    if args.G:
         print("*ENTERING DEVELOPMENT MODE*\n")
         dataFile.write("*ENTERING DEVELOPMENT MODE*\n")
         # baroMsgsFile = open(baroMsgsFilePath, "r")
