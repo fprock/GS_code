@@ -44,6 +44,7 @@ compAltFilePath = "logs/decoded/CompAltLog.txt"
 baroMsgsFilePath = "HexFile.txt"
 dataLogFilePath = "logs/decoded/data.txt"
 byteLogFilePath = "logs/decoded/byteLog.txt"
+rawDataDecFilePath = "logs/raw/rawDataDeclog.txt"
 
 rawPresFile = open(rawPresFilePath, "w")
 rawPresFile.write("Received Raw Pressure Values\n")
@@ -61,6 +62,7 @@ compAltFile = open(compAltFilePath, "w")
 compAltFile.write("0\n")
 dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
+rawDataDecFile = open(rawDataDecFilePath, "w")
 
 global GUI_iterater
 GUI_iterater = 0
@@ -68,8 +70,8 @@ GUI_iterater = 0
 def logData(dataType_count, data, GUI_iterater):
     if dataType_count == 0:
         print("Raw Pressure: " + str(data[0]))
-        rawPresFile.write("Raw Pressure: " + str(int(data[0])) + "\n")
-        dataFile.write("Raw Pressure: " + str(int(data[0])) + "\n")
+        rawPresFile.write("Raw Pressure: " + str(data[0]) + "\n")
+        dataFile.write("Raw Pressure: " + str(data[0]) + "\n")
     elif dataType_count == 1:
         print("Raw Temperature: " + str(data[1]))
         rawTempFile.write("Raw Temperature: " + str(data[1]) + "\n")
@@ -98,8 +100,12 @@ def logData(dataType_count, data, GUI_iterater):
         compAltFile.write(str(data[6]) + "\n")
         dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
         altQueue.put(data[6])
+
+        rawDataDecFile.write(str(data[0]) + ' ' + str(data[1]) + ' ' + str(data[2]) + '\n')
     else:
         print("IDK homie this shouldnt happen")
+
+
 
 
 print("*BEGINNING PROGRAM*\n\n")
@@ -187,7 +193,7 @@ def main():
                     convertingData = data_raw + convertingData
                     dataCount = dataCount + 1
                     if dataCount == 4:
-                        data.append(struct.unpack('!f', bytes.fromhex(convertingData))[0])
+                        data.append(struct.unpack('!I', bytes.fromhex(convertingData))[0])
                         dataType_count = dataType_count + 1
                         dataCount = 0
                         convertingData = ""
@@ -283,5 +289,6 @@ except KeyboardInterrupt:
     rawHumFile.close()
     compHumFile.close()
     dataFile.close()
+    rawDataDecFile.close()
 
     sys.exit(0)
