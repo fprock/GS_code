@@ -193,7 +193,7 @@ def main():
                     convertingData = data_raw + convertingData
                     dataCount = dataCount + 1
                     if dataCount == 4:
-                        data.append(struct.unpack('!I', bytes.fromhex(convertingData))[0])
+                        data.append(struct.unpack('!f', bytes.fromhex(convertingData))[0])
                         dataType_count = dataType_count + 1
                         dataCount = 0
                         convertingData = ""
