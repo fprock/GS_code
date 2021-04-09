@@ -1,16 +1,17 @@
 from datetime import datetime, timedelta
 from multiprocessing import Pipe
 import time
+import settings
 
 global receiver
 sender, receiver = Pipe()
 
 
 def fakeserial(input_file_path):
-
     data_timestamp = []
     data_bytes = []
     data_seconds = []
+    data_offset_seconds = []
     strtend_file = open("logs/start_end.txt", 'w')
     input_file = open(input_file_path, 'r')
     all_lines = input_file.readlines()
@@ -23,6 +24,7 @@ def fakeserial(input_file_path):
         data_seconds.append(
             timedelta(hours=data_timestamp[i].hour, minutes=data_timestamp[i].minute, seconds=data_timestamp[i].second,
                       microseconds=data_timestamp[i].microsecond).total_seconds())
+        data_offset_seconds.append(data_seconds[i] - data_seconds[0])
 
     real_full_delta = data_seconds[-1] - data_seconds[0]
     x = 0
@@ -35,6 +37,10 @@ def fakeserial(input_file_path):
 
     while x < len(data_seconds) - 1:
         # print("while\n")
+        settings.fake_time = data_timestamp[x]
+        settings.fake_delta = data_offset_seconds[x]
+        # timestampStr = fake_time.strftime("%d-%b-%Y (%H:%M:%S.%f)")
+        # print(timestampStr + '\n')
         sender.send(str(data_bytes[x]))
         sleep_dur = float(data_seconds[x + 1]) - float(data_seconds[x])
         x += 1

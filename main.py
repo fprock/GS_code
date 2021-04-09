@@ -7,12 +7,17 @@ from importer import *
 # from importer import receiver
 from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue, GPSQueue
 from readUBX import *
+
+import settings
 from fakeserial import *
 from fakeserial import receiver
 
 
-def getTimeStamp():
-    dateTimeObj = datetime.now()
+def getTimeStamp(arg):
+    if arg:
+        dateTimeObj = settings.fake_time
+    else:
+        dateTimeObj = datetime.now()
     timestampStr = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
     return "Current Timestamp : " + timestampStr
 
@@ -43,6 +48,8 @@ compAltFilePath = "logs/decoded/CompAltLog.txt"
 baroMsgsFilePath = "HexFile.txt"
 dataLogFilePath = "logs/decoded/data.txt"
 byteLogFilePath = "logs/decoded/byteLog.txt"
+
+rawbarocsv = open("logs/decoded/rawbarodat.csv", 'w')
 
 rawPresFile = open(rawPresFilePath, "w")
 rawPresFile.write("Received Raw Pressure Values\n")
@@ -130,6 +137,9 @@ def decodeLogData(data):
     dataFile.write("Calculated Altitude(m): " + str(calAlt) + "\n")
     altQueue.put(calAlt)
 
+    rawbarocsv.write(str(settings.msg_time) + ", " + str(rawPres) + ", " + str(rawTemp) + ", " + str(rawHum) + '\n')
+
+
 
 print("*BEGINNING PROGRAM*\n\n")
 
@@ -141,7 +151,7 @@ parser.add_argument("-G", '-GUI', default=False, action="store_true")
 args = parser.parse_args()
 
 if args.D:
-    Fake = Thread(target=fakeserial, args=("logs/raw/HexFile_withtime.txt",))
+    Fake = Thread(target=fakeserial, args=("HexFile_withtime.txt",))
     Fake.start()
 else:
     importer = Thread(target=importSerial)
@@ -154,6 +164,7 @@ if args.G:
 
 
 def main():
+
     state = "initial"
     baro_state = "payLoadLength"
     payLoadLenFlag = False
@@ -168,6 +179,10 @@ def main():
     gpsByte_string = ""
     baroChecksum = []
     GUI_iterater = 0
+    time_arg = 0
+
+    if args.D:
+        time_arg = 1
 
     if args.G:
         print("*ENTERING DEVELOPMENT MODE*\n")
@@ -182,10 +197,12 @@ def main():
 
     while True:
         data_raw = receiver.recv()
+        recv_timestamp = getTimeStamp(time_arg)
         if len(data_raw) == 2:
+            settings.msg_time = settings.fake_delta
             if data_raw == "BB" and state == "initial":  # First starting byte
-                print(getTimeStamp())
-                dataFile.write("\n" + getTimeStamp() + "\n")
+                print(recv_timestamp)
+                dataFile.write("\n" + recv_timestamp + "\n")
                 print("First FPROCK start flag received")
                 dataFile.write("First FPROCK start flag received\n")
                 state = "baroFirst"
@@ -287,8 +304,10 @@ try:
     main()
 except KeyboardInterrupt:
     # Importer.join()
-    Fake.join()
-    GUI.join()
+    if args.D:
+        Fake.join()
+    if args.G:
+        GUI.join()
     rawPresFile.close()
     compPresFile.close()
     rawTempFile.close()
@@ -296,5 +315,6 @@ except KeyboardInterrupt:
     rawHumFile.close()
     compHumFile.close()
     dataFile.close()
+    rawbarocsv.close()
 
     sys.exit(0)
