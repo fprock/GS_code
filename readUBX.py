@@ -4,9 +4,7 @@ import binascii
 from bitarray import *
 
 def readUBX(readbytes):
-    RELPOSNED = b'3c'
     PVT = b'07'
-    POSLLH = b'02'
     msg = dict()
     j = 0
     while j < len(readbytes):
@@ -61,7 +59,6 @@ def checksum(ackPacket, payloadlength):
 
 
 def persePVT(ackPacket):
-    tempBytes = ""
     ackPacket = ackPacket[6:98]
     pospvt = dict()
 
@@ -70,7 +67,8 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["iTOW"] = int.from_bytes(bytevalue, "little", signed=False)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["iTOW"] = (struct.unpack('<I', bytes.fromhex(bytevalue))[0])
 
     # Year
     byteoffset = 4
@@ -101,14 +99,16 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["tAcc"] = int.from_bytes(bytevalue, "little", signed=False)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["tAcc"] = (struct.unpack('<I', bytes.fromhex(bytevalue))[0] )
 
     # Fraction of a second
     byteoffset = 16
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["nano"] = int.from_bytes(bytevalue, "big", signed=False)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["nano"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0])
 
     #fix type
     byteoffset = 20
@@ -132,7 +132,8 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["Longitude"] = (int.from_bytes(bytevalue, "little", signed=True) * 10**-7)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["Longitude"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0] * 10**(-7))
 
     # PosLat
     byteoffset = 28
@@ -140,34 +141,79 @@ def persePVT(ackPacket):
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["Latitude"] = (int.from_bytes(bytevalue, "little", signed=True) * 10**-7)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["Latitude"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0] * 10**(-7))
 
     # posHeight
     byteoffset = 32
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["Height"] = int.from_bytes(bytevalue, "little", signed=True)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["Height"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
 
     # Height above mean sea level
     byteoffset = 36
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["hMSL"] = int.from_bytes(bytevalue, "little", signed=True)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["hMSL"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # Horizontal accuracy estimate
+    byteoffset = 40
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["hAcc"] = (struct.unpack('<I', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # Vertical accuracy estimate
+    byteoffset = 44
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["vAcc"] = (struct.unpack('<I', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # NED north velocity
+    byteoffset = 48
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["velN"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # NED east velocity
+    byteoffset = 52
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["velE"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # NED down velocity
+    byteoffset = 56
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["velD"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
 
     # Ground Speed
     byteoffset = 60
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["gSpeed"] = int.from_bytes(bytevalue, "little", signed=True)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["gSpeed"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
 
     # Heading of motion
     byteoffset = 64
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    pospvt["headMot"] = (int.from_bytes(bytevalue, "little", signed=True) * 10 ** -5)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["headMot"] = struct.unpack('<i', bytes.fromhex(bytevalue))[0]*10**(-5)
 
     return pospvt
