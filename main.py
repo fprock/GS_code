@@ -151,7 +151,7 @@ parser.add_argument("-G", '-GUI', default=False, action="store_true")
 args = parser.parse_args()
 
 if args.D:
-    Fake = Thread(target=fakeserial, args=("HexFile_withtime.txt",))
+    Fake = Thread(target=fakeserial, args=("test_data/HexFile_withtime.txt",))
     Fake.start()
 else:
     importer = Thread(target=importSerial)
