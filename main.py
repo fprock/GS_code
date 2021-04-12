@@ -12,6 +12,8 @@ import settings
 from fakeserial import *
 from fakeserial import receiver
 
+import geojson
+
 
 def getTimeStamp(arg):
     if arg:
@@ -38,6 +40,31 @@ def validateBaroChecksum(Baro_Bytes, Baro_checksumBytes):
         return False
 
 
+def start_gpx(file_obj):
+    file_obj.write(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<gpx\n"
+        "  version=\"1.0\"\n"
+        "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+        "  xmlns=\"http://www.topografix.com/GPX/1/0\"\n"
+        "  xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\">\n"
+        "\t<trk>\n"
+        "\t\t<trkseg>\n"
+    )
+
+
+def write_gpx(file_obj, lat, lon, ele, time_str):
+    file_obj.write("\t\t\t<trkpt lat=\"" + str(lat) + "\" lon=\"" + str(lon) + "\"><ele>" + str(ele) + "</ele><time>"
+                   + time_str + "</time><name>" + time_str + "</name></trkpt>\n")
+
+
+def end_gpx(file_obj):
+    file_obj.write(
+        "\t\t</trkseg>\n"
+        "\t</trk>\n"
+        "</gpx>"
+    )
+
 rawPresFilePath = "logs/decoded/RawPresLog.txt"
 compPresFilePath = "logs/decoded/CompPresLog.txt"
 rawTempFilePath = "logs/decoded/RawTempLog.txt"
@@ -50,6 +77,7 @@ dataLogFilePath = "logs/decoded/data.txt"
 byteLogFilePath = "logs/decoded/byteLog.txt"
 
 rawbarocsv = open("logs/decoded/rawbarodat.csv", 'w')
+gpsgpx = open("logs/decoded/gpsmap.gpx", 'w')
 
 rawPresFile = open(rawPresFilePath, "w")
 rawPresFile.write("Received Raw Pressure Values\n")
@@ -195,6 +223,12 @@ def main():
         print("READING FROM SERIAL\n")
         dataFile.write("READING FROM SERIAL\n")
 
+    start_gpx(gpsgpx)
+    write_gpx(gpsgpx, 0.228990, 37.307772, 2004.94, "2007-01-01T00:00:26Z")
+    write_gpx(gpsgpx, 0.241400, 37.317961, 3004.94, "2007-12-31T23:00:49Z")
+    end_gpx(gpsgpx)
+    gpsgpx.close()
+
     while True:
         data_raw = receiver.recv()
         recv_timestamp = getTimeStamp(time_arg)
@@ -288,6 +322,7 @@ def main():
                         print(key + ":", value)
                         dataFile.write(str(key) + ": " + str(value) + "\n")
                     print("\n")
+
                     gps_bytes = []
                     gpsByte_string = ""
             else:
