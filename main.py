@@ -15,6 +15,7 @@ from fakeserial import receiver
 import geojson
 
 
+
 def getTimeStamp(arg):
     if arg:
         dateTimeObj = settings.fake_time
@@ -166,6 +167,7 @@ def decodeLogData(data):
     altQueue.put(calAlt)
 
     rawbarocsv.write(str(settings.msg_time) + ", " + str(rawPres) + ", " + str(rawTemp) + ", " + str(rawHum) + '\n')
+    return calAlt
 
 
 
@@ -224,10 +226,10 @@ def main():
         dataFile.write("READING FROM SERIAL\n")
 
     start_gpx(gpsgpx)
-    write_gpx(gpsgpx, 0.228990, 37.307772, 2004.94, "2007-01-01T00:00:26Z")
-    write_gpx(gpsgpx, 0.241400, 37.317961, 3004.94, "2007-12-31T23:00:49Z")
-    end_gpx(gpsgpx)
-    gpsgpx.close()
+    # write_gpx(gpsgpx, 0.228990, 37.307772, 2004.94, "2007-01-01T00:00:26Z")
+    # write_gpx(gpsgpx, 0.241400, 37.317961, 3004.94, "2007-12-31T23:00:49Z")
+    # end_gpx(gpsgpx)
+    # gpsgpx.close()
 
     while True:
         data_raw = receiver.recv()
@@ -280,7 +282,7 @@ def main():
                     baroChecksum.append(data_raw)
                     if baroChecksumCount == 2:
                         if validateBaroChecksum(baroBytes, baroChecksum):
-                            decodeLogData(baroBytes)
+                            baroAlt = decodeLogData(baroBytes)
                         else:
                             print("CHECKSUM INVALID IGNORING DATA")
                         print("\n")
@@ -317,11 +319,17 @@ def main():
                     state = "initial"
                     GPSdict = readUBX(gps_bytes)
                     dataFile.write("\nGPS DATA:\n")
+
                     GPSQueue.put(GPSdict)
                     for key, value in GPSdict.items():
                         print(key + ":", value)
                         dataFile.write(str(key) + ": " + str(value) + "\n")
                     print("\n")
+                    if len(GPSdict) != 0:
+                        if int(GPSdict["Valid Date"]) & int(GPSdict["Valid Time"]):
+                            timestring = str(GPSdict["Year"]) + '-' + str(GPSdict["Month"]) + '-' + str(GPSdict["Day"]) + 'T' +\
+                                str(GPSdict["Hour"]) + ':' + str(GPSdict["Minute"]) + ':' + str(GPSdict["Second"]) + 'Z'
+                            write_gpx(gpsgpx, format(GPSdict["Latitude"], '.6f'), format(GPSdict["Longitude"], '.6f'), format(baroAlt, '.6f'), timestring)
 
                     gps_bytes = []
                     gpsByte_string = ""
@@ -343,6 +351,8 @@ except KeyboardInterrupt:
         Fake.join()
     if args.G:
         GUI.join()
+    end_gpx(gpsgpx)
+    gpsgpx.close()
     rawPresFile.close()
     compPresFile.close()
     rawTempFile.close()
