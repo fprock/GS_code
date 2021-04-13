@@ -1292,7 +1292,7 @@ Calculated Temperature(C): 28.899999618530273
 Calculated Humidity(%): 25.033203125
 Calculated Altitude(m): 142.34962463378906
 
-Current Timestamp : 03-Apr-2021 (15:43:35.298010)
+Current Timestamp : 03-Apr-2021 (15:43:35.298043)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -1752,7 +1752,7 @@ velD: -0.043000000000000003
 gSpeed: 0.047
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:43:37.273747)
+Current Timestamp : 03-Apr-2021 (15:43:37.273673)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -2212,7 +2212,7 @@ velD: 0.051000000000000004
 gSpeed: 0.018000000000000002
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:43:39.249961)
+Current Timestamp : 03-Apr-2021 (15:43:39.249865)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -3885,7 +3885,7 @@ Calculated Temperature(C): 28.959999084472656
 Calculated Humidity(%): 23.8046875
 Calculated Altitude(m): 142.25941467285156
 
-Current Timestamp : 03-Apr-2021 (15:43:46.346850)
+Current Timestamp : 03-Apr-2021 (15:43:46.346811)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -4053,7 +4053,7 @@ Calculated Temperature(C): 28.950000762939453
 Calculated Humidity(%): 23.888671875
 Calculated Altitude(m): 142.2288360595703
 
-Current Timestamp : 03-Apr-2021 (15:43:47.059009)
+Current Timestamp : 03-Apr-2021 (15:43:47.059037)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -5056,7 +5056,7 @@ Calculated Temperature(C): 28.959999084472656
 Calculated Humidity(%): 23.5634765625
 Calculated Altitude(m): 142.1641082763672
 
-Current Timestamp : 03-Apr-2021 (15:43:51.352848)
+Current Timestamp : 03-Apr-2021 (15:43:51.352884)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -7133,7 +7133,7 @@ velD: -0.013000000000000001
 gSpeed: 0.022
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:00.248363)
+Current Timestamp : 03-Apr-2021 (15:44:00.248255)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -7607,7 +7607,7 @@ velD: -0.063
 gSpeed: 0.019
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:02.264765)
+Current Timestamp : 03-Apr-2021 (15:44:02.264709)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -7844,7 +7844,7 @@ velD: -0.011
 gSpeed: 0.02
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:03.273169)
+Current Timestamp : 03-Apr-2021 (15:44:03.273114)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -8541,7 +8541,7 @@ velD: -0.074
 gSpeed: 0.043000000000000003
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:06.251571)
+Current Timestamp : 03-Apr-2021 (15:44:06.251548)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -9015,7 +9015,7 @@ velD: -0.009000000000000001
 gSpeed: 0.07100000000000001
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:08.268383)
+Current Timestamp : 03-Apr-2021 (15:44:08.268268)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -9238,7 +9238,7 @@ velD: 0.056
 gSpeed: 0.05
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:09.228912)
+Current Timestamp : 03-Apr-2021 (15:44:09.228857)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -9475,7 +9475,7 @@ velD: 0.031
 gSpeed: 0.05
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:10.253807)
+Current Timestamp : 03-Apr-2021 (15:44:10.253750)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -9712,7 +9712,7 @@ velD: 0.009000000000000001
 gSpeed: 0.06
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:11.262176)
+Current Timestamp : 03-Apr-2021 (15:44:11.261945)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -9977,7 +9977,7 @@ Calculated Temperature(C): 28.920000076293945
 Calculated Humidity(%): 23.5966796875
 Calculated Altitude(m): 142.14932250976562
 
-Current Timestamp : 03-Apr-2021 (15:44:12.366444)
+Current Timestamp : 03-Apr-2021 (15:44:12.366403)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -10409,7 +10409,7 @@ velD: 0.069
 gSpeed: 0.058
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:14.240039)
+Current Timestamp : 03-Apr-2021 (15:44:14.239929)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -10883,7 +10883,7 @@ velD: 0.02
 gSpeed: 0.058
 headMot: 349.57352000000003
 
-Current Timestamp : 03-Apr-2021 (15:44:16.257029)
+Current Timestamp : 03-Apr-2021 (15:44:16.256874)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -12054,7 +12054,7 @@ velD: -0.841
 gSpeed: 6.333
 headMot: 238.216
 
-Current Timestamp : 03-Apr-2021 (15:44:21.252560)
+Current Timestamp : 03-Apr-2021 (15:44:21.252616)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -12528,7 +12528,7 @@ velD: -0.22
 gSpeed: 2.128
 headMot: 238.216
 
-Current Timestamp : 03-Apr-2021 (15:44:23.253721)
+Current Timestamp : 03-Apr-2021 (15:44:23.253777)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -12765,7 +12765,7 @@ velD: -0.22
 gSpeed: 2.128
 headMot: 238.216
 
-Current Timestamp : 03-Apr-2021 (15:44:24.262093)
+Current Timestamp : 03-Apr-2021 (15:44:24.261991)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -12988,7 +12988,7 @@ velD: -0.22
 gSpeed: 2.128
 headMot: 238.216
 
-Current Timestamp : 03-Apr-2021 (15:44:25.222877)
+Current Timestamp : 03-Apr-2021 (15:44:25.222611)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -13699,7 +13699,7 @@ velD: -0.186
 gSpeed: 2.681
 headMot: 238.216
 
-Current Timestamp : 03-Apr-2021 (15:44:28.248664)
+Current Timestamp : 03-Apr-2021 (15:44:28.248608)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -13936,7 +13936,7 @@ velD: -0.281
 gSpeed: 2.858
 headMot: 238.216
 
-Current Timestamp : 03-Apr-2021 (15:44:29.256954)
+Current Timestamp : 03-Apr-2021 (15:44:29.256903)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -14173,7 +14173,7 @@ velD: -0.281
 gSpeed: 2.858
 headMot: 238.216
 
-Current Timestamp : 03-Apr-2021 (15:44:30.314271)
+Current Timestamp : 03-Apr-2021 (15:44:30.314161)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -14201,7 +14201,7 @@ Calculated Temperature(C): 28.700000762939453
 Calculated Humidity(%): 23.0908203125
 Calculated Altitude(m): 1605.0074462890625
 
-Current Timestamp : 03-Apr-2021 (15:44:30.393496)
+Current Timestamp : 03-Apr-2021 (15:44:30.393517)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -14438,7 +14438,7 @@ Calculated Temperature(C): 28.649999618530273
 Calculated Humidity(%): 22.6904296875
 Calculated Altitude(m): 1627.4716796875
 
-Current Timestamp : 03-Apr-2021 (15:44:31.469285)
+Current Timestamp : 03-Apr-2021 (15:44:31.469241)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -14466,7 +14466,7 @@ Calculated Temperature(C): 28.649999618530273
 Calculated Humidity(%): 22.654296875
 Calculated Altitude(m): 1627.4150390625
 
-Current Timestamp : 03-Apr-2021 (15:44:31.531269)
+Current Timestamp : 03-Apr-2021 (15:44:31.531241)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -14536,7 +14536,7 @@ Calculated Temperature(C): 28.649999618530273
 Calculated Humidity(%): 22.60546875
 Calculated Altitude(m): 1627.6031494140625
 
-Current Timestamp : 03-Apr-2021 (15:44:31.786748)
+Current Timestamp : 03-Apr-2021 (15:44:31.786681)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -14870,7 +14870,7 @@ velD: 0.279
 gSpeed: 22.146
 headMot: 65.76447
 
-Current Timestamp : 03-Apr-2021 (15:44:33.243826)
+Current Timestamp : 03-Apr-2021 (15:44:33.243722)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -15024,7 +15024,7 @@ Calculated Temperature(C): 28.600000381469727
 Calculated Humidity(%): 22.3017578125
 Calculated Altitude(m): 1625.125244140625
 
-Current Timestamp : 03-Apr-2021 (15:44:33.883965)
+Current Timestamp : 03-Apr-2021 (15:44:33.883929)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -15344,7 +15344,7 @@ velD: 0.444
 gSpeed: 19.264
 headMot: 53.88447000000001
 
-Current Timestamp : 03-Apr-2021 (15:44:35.260738)
+Current Timestamp : 03-Apr-2021 (15:44:35.260682)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -15498,7 +15498,7 @@ Calculated Temperature(C): 28.510000228881836
 Calculated Humidity(%): 21.5966796875
 Calculated Altitude(m): 1603.164306640625
 
-Current Timestamp : 03-Apr-2021 (15:44:37.629901)
+Current Timestamp : 03-Apr-2021 (15:44:37.629943)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -15512,7 +15512,7 @@ Calculated Temperature(C): 28.5
 Calculated Humidity(%): 21.5849609375
 Calculated Altitude(m): 1603.0225830078125
 
-Current Timestamp : 03-Apr-2021 (15:44:37.662015)
+Current Timestamp : 03-Apr-2021 (15:44:37.661994)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -15609,7 +15609,7 @@ Calculated Temperature(C): 28.489999771118164
 Calculated Humidity(%): 21.51171875
 Calculated Altitude(m): 1597.2308349609375
 
-Current Timestamp : 03-Apr-2021 (15:44:37.937534)
+Current Timestamp : 03-Apr-2021 (15:44:37.937401)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -15735,7 +15735,7 @@ Calculated Temperature(C): 28.469999313354492
 Calculated Humidity(%): 21.3779296875
 Calculated Altitude(m): 1587.9744873046875
 
-Current Timestamp : 03-Apr-2021 (15:44:38.254463)
+Current Timestamp : 03-Apr-2021 (15:44:38.254442)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -15916,7 +15916,7 @@ velD: 0.892
 gSpeed: 14.68
 headMot: 114.9377
 
-Current Timestamp : 03-Apr-2021 (15:44:38.734954)
+Current Timestamp : 03-Apr-2021 (15:44:38.734855)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -16084,7 +16084,7 @@ Calculated Temperature(C): 28.420000076293945
 Calculated Humidity(%): 21.123046875
 Calculated Altitude(m): 1550.4892578125
 
-Current Timestamp : 03-Apr-2021 (15:44:39.167909)
+Current Timestamp : 03-Apr-2021 (15:44:39.167865)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -16390,7 +16390,7 @@ velD: 1.227
 gSpeed: 14.542
 headMot: 98.01386000000001
 
-Current Timestamp : 03-Apr-2021 (15:44:40.256007)
+Current Timestamp : 03-Apr-2021 (15:44:40.255896)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -16404,7 +16404,7 @@ Calculated Temperature(C): 28.3700008392334
 Calculated Humidity(%): 20.7939453125
 Calculated Altitude(m): 1526.9432373046875
 
-Current Timestamp : 03-Apr-2021 (15:44:40.300454)
+Current Timestamp : 03-Apr-2021 (15:44:40.300416)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -16627,7 +16627,7 @@ velD: 1.447
 gSpeed: 11.635
 headMot: 97.76932000000001
 
-Current Timestamp : 03-Apr-2021 (15:44:41.264557)
+Current Timestamp : 03-Apr-2021 (15:44:41.264416)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -17589,7 +17589,7 @@ Calculated Temperature(C): 27.950000762939453
 Calculated Humidity(%): 19.8583984375
 Calculated Altitude(m): 1432.1163330078125
 
-Current Timestamp : 03-Apr-2021 (15:44:45.328009)
+Current Timestamp : 03-Apr-2021 (15:44:45.327923)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -17743,7 +17743,7 @@ Calculated Temperature(C): 27.940000534057617
 Calculated Humidity(%): 19.833984375
 Calculated Altitude(m): 1418.478515625
 
-Current Timestamp : 03-Apr-2021 (15:44:46.595871)
+Current Timestamp : 03-Apr-2021 (15:44:46.595906)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -17952,7 +17952,7 @@ Calculated Temperature(C): 27.90999984741211
 Calculated Humidity(%): 19.9052734375
 Calculated Altitude(m): 1403.9798583984375
 
-Current Timestamp : 03-Apr-2021 (15:44:47.158258)
+Current Timestamp : 03-Apr-2021 (15:44:47.158225)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -18119,7 +18119,7 @@ Calculated Temperature(C): 27.899999618530273
 Calculated Humidity(%): 20.0009765625
 Calculated Altitude(m): 1391.181396484375
 
-Current Timestamp : 03-Apr-2021 (15:44:47.648333)
+Current Timestamp : 03-Apr-2021 (15:44:47.648293)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -18272,7 +18272,7 @@ velD: 3.887
 gSpeed: 11.831
 headMot: 59.37532
 
-Current Timestamp : 03-Apr-2021 (15:44:48.260827)
+Current Timestamp : 03-Apr-2021 (15:44:48.260715)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -18621,7 +18621,7 @@ Calculated Temperature(C): 27.860000610351562
 Calculated Humidity(%): 20.251953125
 Calculated Altitude(m): 1356.989013671875
 
-Current Timestamp : 03-Apr-2021 (15:44:49.749943)
+Current Timestamp : 03-Apr-2021 (15:44:49.749975)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -18872,7 +18872,7 @@ Calculated Temperature(C): 27.81999969482422
 Calculated Humidity(%): 20.2744140625
 Calculated Altitude(m): 1338.962646484375
 
-Current Timestamp : 03-Apr-2021 (15:44:52.472835)
+Current Timestamp : 03-Apr-2021 (15:44:52.472808)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -19123,7 +19123,7 @@ Calculated Temperature(C): 27.809999465942383
 Calculated Humidity(%): 20.3583984375
 Calculated Altitude(m): 1324.0548095703125
 
-Current Timestamp : 03-Apr-2021 (15:44:53.160353)
+Current Timestamp : 03-Apr-2021 (15:44:53.160301)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -19170,8 +19170,6 @@ ERROR: missing starting flag, discarding incoming data(00) and waiting till next
 ERROR: missing starting flag, discarding incoming data(40) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(A3) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(41) and waiting till next start flags
-
-GPS DATA:
 ERROR: missing starting flag, discarding incoming data(A3) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(41) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(24) and waiting till next start flags
@@ -19627,7 +19625,7 @@ Calculated Temperature(C): 27.719999313354492
 Calculated Humidity(%): 20.330078125
 Calculated Altitude(m): 1279.2481689453125
 
-Current Timestamp : 03-Apr-2021 (15:44:54.635834)
+Current Timestamp : 03-Apr-2021 (15:44:54.635798)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -20003,7 +20001,7 @@ velD: 1.137
 gSpeed: 4.266
 headMot: 72.63409
 
-Current Timestamp : 03-Apr-2021 (15:44:56.265716)
+Current Timestamp : 03-Apr-2021 (15:44:56.265662)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -20463,7 +20461,7 @@ velD: -0.161
 gSpeed: 6.085
 headMot: 52.669070000000005
 
-Current Timestamp : 03-Apr-2021 (15:44:58.234904)
+Current Timestamp : 03-Apr-2021 (15:44:58.234853)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -20700,7 +20698,7 @@ velD: -0.14200000000000002
 gSpeed: 6.415
 headMot: 50.99009
 
-Current Timestamp : 03-Apr-2021 (15:44:59.243493)
+Current Timestamp : 03-Apr-2021 (15:44:59.243370)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -21174,7 +21172,7 @@ velD: -0.105
 gSpeed: 7.6240000000000006
 headMot: 66.91005000000001
 
-Current Timestamp : 03-Apr-2021 (15:45:01.356341)
+Current Timestamp : 03-Apr-2021 (15:45:01.356441)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -21216,7 +21214,7 @@ Calculated Temperature(C): 27.5
 Calculated Humidity(%): 20.1279296875
 Calculated Altitude(m): 1174.3212890625
 
-Current Timestamp : 03-Apr-2021 (15:45:01.454763)
+Current Timestamp : 03-Apr-2021 (15:45:01.454797)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -21411,7 +21409,7 @@ velD: -0.077
 gSpeed: 5.422
 headMot: 74.20547
 
-Current Timestamp : 03-Apr-2021 (15:45:02.253722)
+Current Timestamp : 03-Apr-2021 (15:45:02.253666)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -21495,7 +21493,7 @@ Calculated Temperature(C): 27.459999084472656
 Calculated Humidity(%): 20.1494140625
 Calculated Altitude(m): 1154.141845703125
 
-Current Timestamp : 03-Apr-2021 (15:45:04.446532)
+Current Timestamp : 03-Apr-2021 (15:45:04.446463)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -21690,7 +21688,7 @@ Calculated Temperature(C): 27.420000076293945
 Calculated Humidity(%): 20.076171875
 Calculated Altitude(m): 1141.339111328125
 
-Current Timestamp : 03-Apr-2021 (15:45:04.974595)
+Current Timestamp : 03-Apr-2021 (15:45:04.974574)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -21786,7 +21784,7 @@ Calculated Temperature(C): 27.399999618530273
 Calculated Humidity(%): 20.1591796875
 Calculated Altitude(m): 1120.6953125
 
-Current Timestamp : 03-Apr-2021 (15:45:05.184936)
+Current Timestamp : 03-Apr-2021 (15:45:05.184967)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -21828,7 +21826,7 @@ Calculated Temperature(C): 27.389999389648438
 Calculated Humidity(%): 20.123046875
 Calculated Altitude(m): 1116.995361328125
 
-Current Timestamp : 03-Apr-2021 (15:45:05.294839)
+Current Timestamp : 03-Apr-2021 (15:45:05.294798)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -21870,7 +21868,7 @@ Calculated Temperature(C): 27.3799991607666
 Calculated Humidity(%): 20.1220703125
 Calculated Altitude(m): 1113.2239990234375
 
-Current Timestamp : 03-Apr-2021 (15:45:05.391633)
+Current Timestamp : 03-Apr-2021 (15:45:05.391579)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -22664,7 +22662,7 @@ velD: 0.033
 gSpeed: 5.962
 headMot: 27.62289
 
-Current Timestamp : 03-Apr-2021 (15:45:08.256906)
+Current Timestamp : 03-Apr-2021 (15:45:08.256848)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -22790,7 +22788,7 @@ Calculated Temperature(C): 27.239999771118164
 Calculated Humidity(%): 19.9111328125
 Calculated Altitude(m): 1046.48681640625
 
-Current Timestamp : 03-Apr-2021 (15:45:08.928986)
+Current Timestamp : 03-Apr-2021 (15:45:08.929647)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -22832,7 +22830,7 @@ Calculated Temperature(C): 27.229999542236328
 Calculated Humidity(%): 19.8505859375
 Calculated Altitude(m): 1042.849365234375
 
-Current Timestamp : 03-Apr-2021 (15:45:09.025384)
+Current Timestamp : 03-Apr-2021 (15:45:09.025350)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -22901,7 +22899,7 @@ velD: 0.038
 gSpeed: 5.586
 headMot: 21.301940000000002
 
-Current Timestamp : 03-Apr-2021 (15:45:09.281522)
+Current Timestamp : 03-Apr-2021 (15:45:09.281412)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -23013,7 +23011,7 @@ Calculated Temperature(C): 27.200000762939453
 Calculated Humidity(%): 19.7890625
 Calculated Altitude(m): 1030.646240234375
 
-Current Timestamp : 03-Apr-2021 (15:45:09.713580)
+Current Timestamp : 03-Apr-2021 (15:45:09.713544)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -23124,7 +23122,7 @@ velD: 0.042
 gSpeed: 5.521
 headMot: 18.024710000000002
 
-Current Timestamp : 03-Apr-2021 (15:45:10.226052)
+Current Timestamp : 03-Apr-2021 (15:45:10.226011)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -23612,7 +23610,7 @@ Calculated Temperature(C): 27.010000228881836
 Calculated Humidity(%): 19.92578125
 Calculated Altitude(m): 993.4813232421875
 
-Current Timestamp : 03-Apr-2021 (15:45:12.295796)
+Current Timestamp : 03-Apr-2021 (15:45:12.295842)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -23752,7 +23750,7 @@ Calculated Temperature(C): 26.979999542236328
 Calculated Humidity(%): 19.9599609375
 Calculated Altitude(m): 983.5814208984375
 
-Current Timestamp : 03-Apr-2021 (15:45:12.867614)
+Current Timestamp : 03-Apr-2021 (15:45:12.867541)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -23877,7 +23875,7 @@ Calculated Temperature(C): 26.950000762939453
 Calculated Humidity(%): 19.970703125
 Calculated Altitude(m): 973.3501586914062
 
-Current Timestamp : 03-Apr-2021 (15:45:13.407538)
+Current Timestamp : 03-Apr-2021 (15:45:13.407508)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24156,7 +24154,7 @@ Calculated Temperature(C): 26.90999984741211
 Calculated Humidity(%): 20.029296875
 Calculated Altitude(m): 952.0240478515625
 
-Current Timestamp : 03-Apr-2021 (15:45:16.293722)
+Current Timestamp : 03-Apr-2021 (15:45:16.293657)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24184,7 +24182,7 @@ Calculated Temperature(C): 26.899999618530273
 Calculated Humidity(%): 20.029296875
 Calculated Altitude(m): 950.0502319335938
 
-Current Timestamp : 03-Apr-2021 (15:45:16.358354)
+Current Timestamp : 03-Apr-2021 (15:45:16.358417)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24240,7 +24238,7 @@ Calculated Temperature(C): 26.8799991607666
 Calculated Humidity(%): 20.0634765625
 Calculated Altitude(m): 945.73291015625
 
-Current Timestamp : 03-Apr-2021 (15:45:16.501679)
+Current Timestamp : 03-Apr-2021 (15:45:16.501704)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24407,7 +24405,7 @@ Calculated Temperature(C): 26.829999923706055
 Calculated Humidity(%): 20.0732421875
 Calculated Altitude(m): 935.4354858398438
 
-Current Timestamp : 03-Apr-2021 (15:45:16.966238)
+Current Timestamp : 03-Apr-2021 (15:45:16.966272)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24561,7 +24559,7 @@ Calculated Temperature(C): 26.790000915527344
 Calculated Humidity(%): 20.1083984375
 Calculated Altitude(m): 914.1983642578125
 
-Current Timestamp : 03-Apr-2021 (15:45:17.334348)
+Current Timestamp : 03-Apr-2021 (15:45:17.334312)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24575,7 +24573,7 @@ Calculated Temperature(C): 26.790000915527344
 Calculated Humidity(%): 20.0966796875
 Calculated Altitude(m): 913.184326171875
 
-Current Timestamp : 03-Apr-2021 (15:45:17.382081)
+Current Timestamp : 03-Apr-2021 (15:45:17.382021)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24617,7 +24615,7 @@ Calculated Temperature(C): 26.790000915527344
 Calculated Humidity(%): 20.1083984375
 Calculated Altitude(m): 909.4909057617188
 
-Current Timestamp : 03-Apr-2021 (15:45:17.479895)
+Current Timestamp : 03-Apr-2021 (15:45:17.479940)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24700,7 +24698,7 @@ Calculated Temperature(C): 26.780000686645508
 Calculated Humidity(%): 20.130859375
 Calculated Altitude(m): 903.7373657226562
 
-Current Timestamp : 03-Apr-2021 (15:45:17.744512)
+Current Timestamp : 03-Apr-2021 (15:45:17.744533)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -24895,7 +24893,7 @@ velD: 0.085
 gSpeed: 5.227
 headMot: 30.09287
 
-Current Timestamp : 03-Apr-2021 (15:45:18.262680)
+Current Timestamp : 03-Apr-2021 (15:45:18.262570)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -25983,7 +25981,7 @@ Calculated Temperature(C): 26.579999923706055
 Calculated Humidity(%): 20.3994140625
 Calculated Altitude(m): 810.7350463867188
 
-Current Timestamp : 03-Apr-2021 (15:45:22.953944)
+Current Timestamp : 03-Apr-2021 (15:45:22.953908)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -26457,7 +26455,7 @@ Calculated Temperature(C): 26.469999313354492
 Calculated Humidity(%): 20.478515625
 Calculated Altitude(m): 773.9769287109375
 
-Current Timestamp : 03-Apr-2021 (15:45:24.906885)
+Current Timestamp : 03-Apr-2021 (15:45:24.906838)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -26540,7 +26538,7 @@ velD: 0.009000000000000001
 gSpeed: 4.452
 headMot: 45.43905
 
-Current Timestamp : 03-Apr-2021 (15:45:25.244397)
+Current Timestamp : 03-Apr-2021 (15:45:25.244305)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -27711,7 +27709,7 @@ velD: 0.266
 gSpeed: 5.4830000000000005
 headMot: 13.714220000000001
 
-Current Timestamp : 03-Apr-2021 (15:45:30.222407)
+Current Timestamp : 03-Apr-2021 (15:45:30.222351)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -28896,7 +28894,7 @@ velD: 0.053
 gSpeed: 7.973
 headMot: 7.261000000000001
 
-Current Timestamp : 03-Apr-2021 (15:45:35.264942)
+Current Timestamp : 03-Apr-2021 (15:45:35.264822)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -29370,7 +29368,7 @@ velD: 0.10300000000000001
 gSpeed: 5.96
 headMot: 355.91536
 
-Current Timestamp : 03-Apr-2021 (15:45:37.266834)
+Current Timestamp : 03-Apr-2021 (15:45:37.266749)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -29593,7 +29591,7 @@ velD: 0.445
 gSpeed: 5.76
 headMot: 357.72472000000005
 
-Current Timestamp : 03-Apr-2021 (15:45:38.227193)
+Current Timestamp : 03-Apr-2021 (15:45:38.227085)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -30304,7 +30302,7 @@ velD: 0.494
 gSpeed: 3.217
 headMot: 358.65688
 
-Current Timestamp : 03-Apr-2021 (15:45:41.252781)
+Current Timestamp : 03-Apr-2021 (15:45:41.252727)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -30541,7 +30539,7 @@ velD: 0.91
 gSpeed: 2.214
 headMot: 358.0094
 
-Current Timestamp : 03-Apr-2021 (15:45:42.261288)
+Current Timestamp : 03-Apr-2021 (15:45:42.261211)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -30778,7 +30776,7 @@ velD: 0.9450000000000001
 gSpeed: 2.564
 headMot: 14.991980000000002
 
-Current Timestamp : 03-Apr-2021 (15:45:43.269973)
+Current Timestamp : 03-Apr-2021 (15:45:43.269918)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -31029,7 +31027,7 @@ Calculated Temperature(C): 25.799999237060547
 Calculated Humidity(%): 21.431640625
 Calculated Altitude(m): 490.67486572265625
 
-Current Timestamp : 03-Apr-2021 (15:45:44.310222)
+Current Timestamp : 03-Apr-2021 (15:45:44.310199)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -31252,7 +31250,7 @@ Calculated Temperature(C): 25.780000686645508
 Calculated Humidity(%): 21.478515625
 Calculated Altitude(m): 476.84088134765625
 
-Current Timestamp : 03-Apr-2021 (15:45:45.273588)
+Current Timestamp : 03-Apr-2021 (15:45:45.273619)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -31949,7 +31947,7 @@ velD: 2.746
 gSpeed: 6.6530000000000005
 headMot: 28.555570000000003
 
-Current Timestamp : 03-Apr-2021 (15:45:48.248990)
+Current Timestamp : 03-Apr-2021 (15:45:48.248919)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -32131,7 +32129,7 @@ Calculated Temperature(C): 25.649999618530273
 Calculated Humidity(%): 21.5322265625
 Calculated Altitude(m): 429.6736755371094
 
-Current Timestamp : 03-Apr-2021 (15:45:48.985693)
+Current Timestamp : 03-Apr-2021 (15:45:48.985742)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -32284,7 +32282,7 @@ Calculated Temperature(C): 25.639999389648438
 Calculated Humidity(%): 21.447265625
 Calculated Altitude(m): 421.080322265625
 
-Current Timestamp : 03-Apr-2021 (15:45:49.673535)
+Current Timestamp : 03-Apr-2021 (15:45:49.673513)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -32298,7 +32296,7 @@ Calculated Temperature(C): 25.639999389648438
 Calculated Humidity(%): 21.447265625
 Calculated Altitude(m): 420.359375
 
-Current Timestamp : 03-Apr-2021 (15:45:49.710276)
+Current Timestamp : 03-Apr-2021 (15:45:49.710243)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -32423,7 +32421,7 @@ velD: 3.003
 gSpeed: 6.039
 headMot: 27.665670000000002
 
-Current Timestamp : 03-Apr-2021 (15:45:50.266741)
+Current Timestamp : 03-Apr-2021 (15:45:50.266608)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -33120,7 +33118,7 @@ velD: 3.4330000000000003
 gSpeed: 3.802
 headMot: 11.274120000000002
 
-Current Timestamp : 03-Apr-2021 (15:45:53.259931)
+Current Timestamp : 03-Apr-2021 (15:45:53.259875)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -33371,7 +33369,7 @@ Calculated Temperature(C): 25.540000915527344
 Calculated Humidity(%): 21.71875
 Calculated Altitude(m): 358.1553649902344
 
-Current Timestamp : 03-Apr-2021 (15:45:54.303049)
+Current Timestamp : 03-Apr-2021 (15:45:54.303083)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -33594,7 +33592,7 @@ velD: 3.673
 gSpeed: 5.062
 headMot: 26.8182
 
-Current Timestamp : 03-Apr-2021 (15:45:55.261592)
+Current Timestamp : 03-Apr-2021 (15:45:55.261480)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -34291,7 +34289,7 @@ velD: 4.364
 gSpeed: 4.402
 headMot: 12.02804
 
-Current Timestamp : 03-Apr-2021 (15:45:58.239301)
+Current Timestamp : 03-Apr-2021 (15:45:58.239186)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -34528,7 +34526,7 @@ velD: 4.543
 gSpeed: 4.11
 headMot: 15.960860000000002
 
-Current Timestamp : 03-Apr-2021 (15:45:59.247624)
+Current Timestamp : 03-Apr-2021 (15:45:59.247702)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -35672,7 +35670,7 @@ Calculated Temperature(C): 25.280000686645508
 Calculated Humidity(%): 21.263671875
 Calculated Altitude(m): 209.3416290283203
 
-Current Timestamp : 03-Apr-2021 (15:46:04.210750)
+Current Timestamp : 03-Apr-2021 (15:46:04.210772)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -35769,7 +35767,7 @@ Calculated Temperature(C): 25.270000457763672
 Calculated Humidity(%): 21.2509765625
 Calculated Altitude(m): 202.92588806152344
 
-Current Timestamp : 03-Apr-2021 (15:46:04.485753)
+Current Timestamp : 03-Apr-2021 (15:46:04.485781)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -36578,7 +36576,7 @@ Calculated Temperature(C): 25.219999313354492
 Calculated Humidity(%): 21.296875
 Calculated Altitude(m): 139.47093200683594
 
-Current Timestamp : 03-Apr-2021 (15:46:14.248351)
+Current Timestamp : 03-Apr-2021 (15:46:14.248395)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -36592,7 +36590,7 @@ Calculated Temperature(C): 25.229999542236328
 Calculated Humidity(%): 21.2841796875
 Calculated Altitude(m): 139.0240936279297
 
-Current Timestamp : 03-Apr-2021 (15:46:14.280540)
+Current Timestamp : 03-Apr-2021 (15:46:14.280491)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -36647,7 +36645,7 @@ velD: 6.2780000000000005
 gSpeed: 1.697
 headMot: 127.08532000000001
 
-Current Timestamp : 03-Apr-2021 (15:46:16.185562)
+Current Timestamp : 03-Apr-2021 (15:46:16.185304)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -36731,7 +36729,7 @@ Calculated Temperature(C): 25.229999542236328
 Calculated Humidity(%): 21.416015625
 Calculated Altitude(m): 136.52783203125
 
-Current Timestamp : 03-Apr-2021 (15:46:16.395245)
+Current Timestamp : 03-Apr-2021 (15:46:16.395279)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -36843,7 +36841,7 @@ Calculated Temperature(C): 25.219999313354492
 Calculated Humidity(%): 21.4638671875
 Calculated Altitude(m): 136.15548706054688
 
-Current Timestamp : 03-Apr-2021 (15:46:22.669097)
+Current Timestamp : 03-Apr-2021 (15:46:22.669136)
 First FPROCK start flag received
 Second FPROCK start flag received
 Barometer Class received
@@ -36856,8 +36854,6 @@ Calculated Pressure(Pa): 108307.6875
 Calculated Temperature(C): 25.219999313354492
 Calculated Humidity(%): 21.4638671875
 Calculated Altitude(m): 136.15191650390625
-
-GPS DATA:
 ERROR: missing starting flag, discarding incoming data(F9) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(50) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(00) and waiting till next start flags
@@ -36934,8 +36930,6 @@ Calculated Pressure(Pa): 108309.078125
 Calculated Temperature(C): 25.09000015258789
 Calculated Humidity(%): 21.9970703125
 Calculated Altitude(m): 136.04393005371094
-
-GPS DATA:
 ERROR: missing starting flag, discarding incoming data(AF) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(41) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(D0) and waiting till next start flags
@@ -37073,8 +37067,6 @@ ERROR: missing starting flag, discarding incoming data(08) and waiting till next
 ERROR: missing starting flag, discarding incoming data(43) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(32) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(41) and waiting till next start flags
-
-GPS DATA:
 ERROR: missing starting flag, discarding incoming data(00) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(70) and waiting till next start flags
 ERROR: missing starting flag, discarding incoming data(19) and waiting till next start flags
