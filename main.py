@@ -7,13 +7,10 @@ from importer import *
 # from importer import receiver
 from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue, GPSQueue
 from readUBX import *
-
 import settings
 from fakeserial import *
 from fakeserial import receiver
-
 import geojson
-
 
 
 def getTimeStamp(arg):
@@ -66,34 +63,20 @@ def end_gpx(file_obj):
         "</gpx>"
     )
 
-rawPresFilePath = "logs/decoded/RawPresLog.txt"
-compPresFilePath = "logs/decoded/CompPresLog.txt"
-rawTempFilePath = "logs/decoded/RawTempLog.txt"
-compTempFilePath = "logs/decoded/CompTempLog.txt"
-rawHumFilePath = "logs/decoded/RawHumLog.txt"
-compHumFilePath = "logs/decoded/CompHumLog.txt"
-compAltFilePath = "logs/decoded/CompAltLog.txt"
+
+GPS_CSV = "logs/decoded/GpsMessages.csv"
+baroCSV = "logs/decoded/BaroMessages.csv"
 baroMsgsFilePath = "HexFile.txt"
 dataLogFilePath = "logs/decoded/data.txt"
 byteLogFilePath = "logs/decoded/byteLog.txt"
 
-rawbarocsv = open("logs/decoded/rawbarodat.csv", 'w')
 gpsgpx = open("logs/decoded/gpsmap.gpx", 'w')
 
-rawPresFile = open(rawPresFilePath, "w")
-rawPresFile.write("Received Raw Pressure Values\n")
-compPresFile = open(compPresFilePath, "w")
-compPresFile.write("0\n")
-rawTempFile = open(rawTempFilePath, "w")
-rawTempFile.write("Received Raw Temperature Values\n")
-compTempFile = open(compTempFilePath, "w")
-compTempFile.write("0\n")
-rawHumFile = open(rawHumFilePath, "w")
-rawHumFile.write("Received Raw Humidity Values\n")
-compHumFile = open(compHumFilePath, "w")
-compHumFile.write("0\n")
-compAltFile = open(compAltFilePath, "w")
-compAltFile.write("0\n")
+GPSMessages = open(GPS_CSV, "w")
+GPSMessages.write("iTOW,Year,Month,Day,Hour,Minute,Second,Valid Date,Valid Time,Fully Resolved,Valid Mag,tAcc,nano,Fix Type,Longitude,Latitude,Height,hMSL,hAcc,vAcc,velN,valE,valD,gSpeed,headMot,\n")
+BaroMessages = open(baroCSV, "w")
+BaroMessages.write("Time,Raw Pressure,Raw Temperature,Raw Humidity,Calculated Pressure,Calculated Temperature,Calculated "
+                   "Humidity,Calculated Altitude,\n")
 dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
 
@@ -105,7 +88,7 @@ def decodeLogData(data):
         rawPresHex += data[i]
     rawPres = struct.unpack('<I', bytes.fromhex(rawPresHex))[0]
     print("Raw Pressure: " + str(rawPres))
-    rawPresFile.write("Raw Pressure: " + str(rawPres) + "\n")
+    BaroMessages.write(str(rawPres) + ",")
     dataFile.write("Raw Pressure: " + str(rawPres) + "\n")
 
     # Raw temp decoding and logging
@@ -114,7 +97,7 @@ def decodeLogData(data):
         rawTempHex += data[i]
     rawTemp = struct.unpack('<I', bytes.fromhex(rawTempHex))[0]
     print("Raw Temperature: " + str(rawTemp))
-    rawTempFile.write("Raw Temperature: " + str(rawTemp) + "\n")
+    BaroMessages.write(str(rawTemp) + ",")
     dataFile.write("Raw Temperature: " + str(rawTemp) + "\n")
 
     # Raw humidity decoding and logging
@@ -123,7 +106,7 @@ def decodeLogData(data):
         rawHumHex += data[i]
     rawHum = struct.unpack('<I', bytes.fromhex(rawHumHex))[0]
     print("Raw Humidity: " + str(rawHum))
-    rawHumFile.write("Raw Humidity: " + str(rawHum) + "\n")
+    BaroMessages.write(str(rawHum) + ",")
     dataFile.write("Raw Humidity: " + str(rawHum) + "\n")
 
     # calculated pressure decode and logging
@@ -132,7 +115,7 @@ def decodeLogData(data):
         calPresHex += data[i]
     calPres = struct.unpack('<f', bytes.fromhex(calPresHex))[0]
     print("Calculated Pressure(Pa): " + str(calPres))
-    compPresFile.write(str(calPres) + "\n")
+    BaroMessages.write(str(calPres) + ",")
     dataFile.write("Calculated Pressure(Pa): " + str(calPres) + "\n")
     presQueue.put(calPres)
 
@@ -142,7 +125,7 @@ def decodeLogData(data):
         calTempHex += data[i]
     calTemp = struct.unpack('<f', bytes.fromhex(calTempHex))[0]
     print("Calculated Temperature(C): " + str(calTemp))
-    compTempFile.write(str(calTemp) + "\n")
+    BaroMessages.write(str(calTemp) + ",")
     dataFile.write("Calculated Temperature(C): " + str(calTemp) + "\n")
     tempQueue.put(calTemp)
 
@@ -152,7 +135,7 @@ def decodeLogData(data):
         calHumHex += data[i]
     calHum = struct.unpack('<f', bytes.fromhex(calHumHex))[0]
     print("Calculated Humidity(%): " + str(calHum))
-    compHumFile.write(str(calHum) + "\n")
+    BaroMessages.write(str(calHum) + ",")
     dataFile.write("Calculated Humidity(%): " + str(calHum) + "\n")
     humQueue.put(calHum)
 
@@ -162,13 +145,13 @@ def decodeLogData(data):
         calAltHex += data[i]
     calAlt = struct.unpack('<f', bytes.fromhex(calAltHex))[0]
     print("Calculated Altitude: " + str(calAlt))
-    compAltFile.write(str(calAlt) + "\n")
+    BaroMessages.write(str(calAlt) + ",")
     dataFile.write("Calculated Altitude(m): " + str(calAlt) + "\n")
     altQueue.put(calAlt)
 
-    rawbarocsv.write(str(settings.msg_time) + ", " + str(rawPres) + ", " + str(rawTemp) + ", " + str(rawHum) + '\n')
+    BaroMessages.write("\n")
+    BaroMessages.flush()
     return calAlt
-
 
 
 print("*BEGINNING PROGRAM*\n\n")
@@ -181,7 +164,7 @@ parser.add_argument("-G", '-GUI', default=False, action="store_true")
 args = parser.parse_args()
 
 if args.D:
-    Fake = Thread(target=fakeserial, args=("test_data/HexFile_withtime.txt",))
+    Fake = Thread(target=fakeserial, args=("HexFile_withtime.txt",))
     Fake.start()
 else:
     importer = Thread(target=importSerial)
@@ -194,7 +177,6 @@ if args.G:
 
 
 def main():
-
     state = "initial"
     baro_state = "payLoadLength"
     payLoadLenFlag = False
@@ -282,6 +264,7 @@ def main():
                     baroChecksum.append(data_raw)
                     if baroChecksumCount == 2:
                         if validateBaroChecksum(baroBytes, baroChecksum):
+                            BaroMessages.write(recv_timestamp.strip("Current Timestamp: ") + ',')
                             baroAlt = decodeLogData(baroBytes)
                         else:
                             print("CHECKSUM INVALID IGNORING DATA")
@@ -318,18 +301,23 @@ def main():
                 if i == 100:
                     state = "initial"
                     GPSdict = readUBX(gps_bytes)
-                    dataFile.write("\nGPS DATA:\n")
 
-                    GPSQueue.put(GPSdict)
-                    for key, value in GPSdict.items():
-                        print(key + ":", value)
-                        dataFile.write(str(key) + ": " + str(value) + "\n")
-                    print("\n")
                     if len(GPSdict) != 0:
+                        dataFile.write("\nGPS DATA:\n")
+                        GPSQueue.put(GPSdict)
+                        for key, value in GPSdict.items():
+                            print(key + ":", value)
+                            dataFile.write(str(key) + ": " + str(value) + "\n")
+                            GPSMessages.write(str(value) + ",")
+                        GPSMessages.write('\n')
+                        print("\n")
                         if int(GPSdict["Valid Date"]) & int(GPSdict["Valid Time"]):
-                            timestring = str(GPSdict["Year"]) + '-' + str(GPSdict["Month"]) + '-' + str(GPSdict["Day"]) + 'T' +\
-                                str(GPSdict["Hour"]) + ':' + str(GPSdict["Minute"]) + ':' + str(GPSdict["Second"]) + 'Z'
-                            write_gpx(gpsgpx, format(GPSdict["Latitude"], '.6f'), format(GPSdict["Longitude"], '.6f'), format(baroAlt, '.6f'), timestring)
+                            timestring = str(GPSdict["Year"]) + '-' + str(GPSdict["Month"]) + '-' + str(
+                                GPSdict["Day"]) + 'T' + \
+                                         str(GPSdict["Hour"]) + ':' + str(GPSdict["Minute"]) + ':' + str(
+                                GPSdict["Second"]) + 'Z'
+                            write_gpx(gpsgpx, format(GPSdict["Latitude"], '.6f'), format(GPSdict["Longitude"], '.6f'),
+                                      format(baroAlt, '.6f'), timestring)
 
                     gps_bytes = []
                     gpsByte_string = ""
@@ -353,13 +341,8 @@ except KeyboardInterrupt:
         GUI.join()
     end_gpx(gpsgpx)
     gpsgpx.close()
-    rawPresFile.close()
-    compPresFile.close()
-    rawTempFile.close()
-    compTempFile.close()
-    rawHumFile.close()
-    compHumFile.close()
+
     dataFile.close()
-    rawbarocsv.close()
+
 
     sys.exit(0)
