@@ -4,9 +4,7 @@ import binascii
 from bitarray import *
 
 def readUBX(readbytes):
-    RELPOSNED = b'3c'
     PVT = b'07'
-    POSLLH = b'02'
     msg = dict()
     j = 0
     while j < len(readbytes):
@@ -61,16 +59,16 @@ def checksum(ackPacket, payloadlength):
 
 
 def persePVT(ackPacket):
-    tempBytes = ""
     ackPacket = ackPacket[6:98]
     pospvt = dict()
 
     # iTOW
     byteoffset = 0
-    for i in range(0, 4):
-        tempBytes += bytes.decode(ackPacket[byteoffset + i])
-    pospvt["iTOW"] = int(tempBytes, 16)
-    tempBytes = ""
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["iTOW"] = (struct.unpack('<I', bytes.fromhex(bytevalue))[0])
 
     # Year
     byteoffset = 4
@@ -91,88 +89,131 @@ def persePVT(ackPacket):
     byteoffset = 11
     bytevalue = bytes.decode(ackPacket[byteoffset])
     validbits = bin(int(bytevalue, 16)).zfill(8)
-    pospvt["Valid Date"] = validbits[9]
-    pospvt["Valid Time"] = validbits[8]
-    pospvt["Fully Resolved"] = validbits[7]
-    pospvt["Valid Mag"] = validbits[6]
+    pospvt["Valid Date"] = validbits[7]
+    pospvt["Valid Time"] = validbits[6]
+    pospvt["Fully Resolved"] = validbits[5]
+    pospvt["Valid Mag"] = validbits[4]
 
     # time accuracy esitmate
     byteoffset = 12
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print(bytevalue)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["tAcc"] = (struct.unpack('<I', bytes.fromhex(bytevalue))[0] )
 
     # Fraction of a second
     byteoffset = 16
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    print(bytevalue)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["nano"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0])
 
     #fix type
     byteoffset = 20
     bytevalue = bytes.decode(ackPacket[byteoffset])
-    if int(bytevalue[1]) == 0:
+    if bytevalue == '00':
         pospvt["Fix Type"] = "No Fix"
-    elif int(bytevalue[1]) == 1:
+    elif bytevalue == '01':
         pospvt["Fix Type"] = "Dead reckoning only"
-    elif int(bytevalue[1]) == 2:
+    elif bytevalue == '02':
         pospvt["Fix Type"] = "2D-Fix"
-    elif int(bytevalue[1]) == 3:
+    elif bytevalue == '03':
         pospvt["Fix Type"] = "3D-Fix"
-    elif int(bytevalue[1]) == 6:
+    elif bytevalue == '04':
         pospvt["Fix Type"] = "GNSS + Dead reckoning combined"
-    elif int(bytevalue[1]) == 5:
+    elif bytevalue == '05':
         pospvt["Fix Type"] = "Time only fix"
 
     # PosLon
     byteoffset = 24
+    bytevalue = ""
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-
-    #print("lon Bytes: " + str(bytevalue))
-    pospvt["Longitude"] = int(bytevalue, 16)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["Longitude"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0] * 10**(-7))
 
     # PosLat
     byteoffset = 28
+    bytevalue = ""
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("lat Bytes: " + str(bytevalue))
-    pospvt["Latitude"] = int(bytevalue, 16)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["Latitude"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0] * 10**(-7))
 
     # posHeight
     byteoffset = 32
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("height Bytes: " + str(bytevalue))
-    pospvt["Height"] = int(bytevalue, 16)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["Height"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
 
     # Height above mean sea level
     byteoffset = 36
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("hMSL Bytes: " + str(bytevalue))
-    pospvt["hMSL"] = int(bytevalue, 16)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["hMSL"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # Horizontal accuracy estimate
+    byteoffset = 40
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["hAcc"] = (struct.unpack('<I', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # Vertical accuracy estimate
+    byteoffset = 44
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["vAcc"] = (struct.unpack('<I', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # NED north velocity
+    byteoffset = 48
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["velN"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # NED east velocity
+    byteoffset = 52
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["velE"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
+
+    # NED down velocity
+    byteoffset = 56
+    bytevalue = ackPacket[byteoffset]
+    for i in range(1, 4):
+        bytevalue += ackPacket[byteoffset + i]
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["velD"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
 
     # Ground Speed
     byteoffset = 60
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("gSpeed Bytes: " + str(bytevalue))
-    pospvt["gSpeed"] = int(bytevalue, 16)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["gSpeed"] = (struct.unpack('<i', bytes.fromhex(bytevalue))[0]) * 10 ** (-3)
 
     # Heading of motion
     byteoffset = 64
     bytevalue = ackPacket[byteoffset]
     for i in range(1, 4):
         bytevalue += ackPacket[byteoffset + i]
-    #print("headMot Bytes: " + str(bytevalue))
-    pospvt["headMot"] = int(bytevalue, 16)
+    bytevalue = str(bytevalue)[2:10].upper()
+    pospvt["headMot"] = struct.unpack('<i', bytes.fromhex(bytevalue))[0]*10**(-5)
 
     return pospvt
