@@ -4,19 +4,22 @@ import multiprocessing as mp
 from threading import *
 from datetime import datetime
 from importer import *
-from importer import receiver
+# from importer import receiver
 from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue, GPSQueue
 from readUBX import *
+import settings
+from fakeserial import *
+from fakeserial import receiver
+import geojson
 
 
-def getTimeStamp():
-    dateTimeObj = datetime.now()
+def getTimeStamp(arg):
+    if arg:
+        dateTimeObj = settings.fake_time
+    else:
+        dateTimeObj = datetime.now()
     timestampStr = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
     return "Current Timestamp : " + timestampStr
-
-
-def fakeSerial(inputFile):
-    return inputFile.read(2)
 
 
 def validateBaroChecksum(Baro_Bytes, Baro_checksumBytes):
@@ -35,100 +38,152 @@ def validateBaroChecksum(Baro_Bytes, Baro_checksumBytes):
         return False
 
 
-rawPresFilePath = "logs/decoded/RawPresLog.txt"
-compPresFilePath = "logs/decoded/CompPresLog.txt"
-rawTempFilePath = "logs/decoded/RawTempLog.txt"
-compTempFilePath = "logs/decoded/CompTempLog.txt"
-rawHumFilePath = "logs/decoded/RawHumLog.txt"
-compHumFilePath = "logs/decoded/CompHumLog.txt"
-compAltFilePath = "logs/decoded/CompAltLog.txt"
+def start_gpx(file_obj):
+    file_obj.write(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<gpx\n"
+        "  version=\"1.0\"\n"
+        "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+        "  xmlns=\"http://www.topografix.com/GPX/1/0\"\n"
+        "  xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\">\n"
+        "\t<trk>\n"
+        "\t\t<trkseg>\n"
+    )
+
+
+def write_gpx(file_obj, lat, lon, ele, time_str):
+    file_obj.write("\t\t\t<trkpt lat=\"" + str(lat) + "\" lon=\"" + str(lon) + "\"><ele>" + str(ele) + "</ele><time>"
+                   + time_str + "</time><name>" + time_str + "</name></trkpt>\n")
+
+
+def end_gpx(file_obj):
+    file_obj.write(
+        "\t\t</trkseg>\n"
+        "\t</trk>\n"
+        "</gpx>"
+    )
+
+
+GPS_CSV = "logs/decoded/GpsMessages.csv"
+baroCSV = "logs/decoded/BaroMessages.csv"
 baroMsgsFilePath = "HexFile.txt"
 dataLogFilePath = "logs/decoded/data.txt"
 byteLogFilePath = "logs/decoded/byteLog.txt"
 
-rawPresFile = open(rawPresFilePath, "w")
-rawPresFile.write("Received Raw Pressure Values\n")
-compPresFile = open(compPresFilePath, "w")
-compPresFile.write("0\n")
-rawTempFile = open(rawTempFilePath, "w")
-rawTempFile.write("Received Raw Temperature Values\n")
-compTempFile = open(compTempFilePath, "w")
-compTempFile.write("0\n")
-rawHumFile = open(rawHumFilePath, "w")
-rawHumFile.write("Received Raw Humidity Values\n")
-compHumFile = open(compHumFilePath, "w")
-compHumFile.write("0\n")
-compAltFile = open(compAltFilePath, "w")
-compAltFile.write("0\n")
+gpsgpx = open("logs/decoded/gpsmap.gpx", 'w')
+
+GPSMessages = open(GPS_CSV, "w")
+GPSMessages.write("iTOW,Year,Month,Day,Hour,Minute,Second,Valid Date,Valid Time,Fully Resolved,Valid Mag,tAcc,nano,Fix Type,Longitude,Latitude,Height,hMSL,hAcc,vAcc,velN,valE,valD,gSpeed,headMot,\n")
+BaroMessages = open(baroCSV, "w")
+BaroMessages.write("Time,Raw Pressure,Raw Temperature,Raw Humidity,Calculated Pressure,Calculated Temperature,Calculated "
+                   "Humidity,Calculated Altitude,\n")
 dataFile = open(dataLogFilePath, "w")
 byteFile = open(byteLogFilePath, "w")
 
-global GUI_iterater
-GUI_iterater = 0
 
-def logData(dataType_count, data, GUI_iterater):
-    if dataType_count == 0:
-        print("Raw Pressure: " + str(data[0]))
-        rawPresFile.write("Raw Pressure: " + str(data[0]) + "\n")
-        dataFile.write("Raw Pressure: " + str(data[0]) + "\n")
-    elif dataType_count == 1:
-        print("Raw Temperature: " + str(data[1]))
-        rawTempFile.write("Raw Temperature: " + str(data[1]) + "\n")
-        dataFile.write("Raw Temperature: " + str(data[1]) + "\n")
-    elif dataType_count == 2:
-        print("Raw Humidity: " + str(data[2]))
-        rawHumFile.write("Raw Humidity: " + str(data[2]) + "\n")
-        dataFile.write("Raw Humidity: " + str(data[2]) + "\n")
-    elif dataType_count == 3:
-        print("Calculated Pressure(Pa): " + str(data[3]))
-        compPresFile.write(str(data[3]) + "\n")
-        dataFile.write("Calculated Pressure(Pa): " + str(data[3]) + "\n")
-        presQueue.put(data[3])
-    elif dataType_count == 4:
-        print("Calculated Temperature(C): " + str(data[4]))
-        compTempFile.write(str(data[4]) + "\n")
-        dataFile.write("Calculated Temperature(C): " + str(data[4]) + "\n")
-        tempQueue.put(data[4])
-    elif dataType_count == 5:
-        print("Calculated Humidity(%): " + str(data[5]))
-        compHumFile.write(str(data[5]) + "\n")
-        dataFile.write("Calculated Humidity(%): " + str(data[5]) + "\n")
-        humQueue.put(data[5])
-    elif dataType_count == 6:
-        print("Calculated Altitude: " + str(data[6]))
-        compAltFile.write(str(data[6]) + "\n")
-        dataFile.write("Calculated Altitude(m): " + str(data[6]) + "\n")
-        altQueue.put(data[6])
-    else:
-        print("IDK homie this shouldnt happen")
+def decodeLogData(data):
+    # raw pressure decoding and logging
+    rawPresHex = ""
+    for i in range(0, 4):
+        rawPresHex += data[i]
+    rawPres = struct.unpack('<I', bytes.fromhex(rawPresHex))[0]
+    print("Raw Pressure: " + str(rawPres))
+    BaroMessages.write(str(rawPres) + ",")
+    dataFile.write("Raw Pressure: " + str(rawPres) + "\n")
+
+    # Raw temp decoding and logging
+    rawTempHex = ""
+    for i in range(4, 8):
+        rawTempHex += data[i]
+    rawTemp = struct.unpack('<I', bytes.fromhex(rawTempHex))[0]
+    print("Raw Temperature: " + str(rawTemp))
+    BaroMessages.write(str(rawTemp) + ",")
+    dataFile.write("Raw Temperature: " + str(rawTemp) + "\n")
+
+    # Raw humidity decoding and logging
+    rawHumHex = ""
+    for i in range(8, 12):
+        rawHumHex += data[i]
+    rawHum = struct.unpack('<I', bytes.fromhex(rawHumHex))[0]
+    print("Raw Humidity: " + str(rawHum))
+    BaroMessages.write(str(rawHum) + ",")
+    dataFile.write("Raw Humidity: " + str(rawHum) + "\n")
+
+    # calculated pressure decode and logging
+    calPresHex = ""
+    for i in range(12, 16):
+        calPresHex += data[i]
+    calPres = struct.unpack('<f', bytes.fromhex(calPresHex))[0]
+    print("Calculated Pressure(Pa): " + str(calPres))
+    BaroMessages.write(str(calPres) + ",")
+    dataFile.write("Calculated Pressure(Pa): " + str(calPres) + "\n")
+    presQueue.put(calPres)
+
+    # calculated tempurature decoding and logging
+    calTempHex = ""
+    for i in range(16, 20):
+        calTempHex += data[i]
+    calTemp = struct.unpack('<f', bytes.fromhex(calTempHex))[0]
+    print("Calculated Temperature(C): " + str(calTemp))
+    BaroMessages.write(str(calTemp) + ",")
+    dataFile.write("Calculated Temperature(C): " + str(calTemp) + "\n")
+    tempQueue.put(calTemp)
+
+    # calculated humidity decoding and logging
+    calHumHex = ""
+    for i in range(20, 24):
+        calHumHex += data[i]
+    calHum = struct.unpack('<f', bytes.fromhex(calHumHex))[0]
+    print("Calculated Humidity(%): " + str(calHum))
+    BaroMessages.write(str(calHum) + ",")
+    dataFile.write("Calculated Humidity(%): " + str(calHum) + "\n")
+    humQueue.put(calHum)
+
+    # calculated altitude decoding and logging
+    calAltHex = ""
+    for i in range(24, 28):
+        calAltHex += data[i]
+    calAlt = struct.unpack('<f', bytes.fromhex(calAltHex))[0]
+    print("Calculated Altitude: " + str(calAlt))
+    BaroMessages.write(str(calAlt) + ",")
+    dataFile.write("Calculated Altitude(m): " + str(calAlt) + "\n")
+    altQueue.put(calAlt)
+
+    BaroMessages.write("\n")
+    BaroMessages.flush()
+    return calAlt
 
 
 print("*BEGINNING PROGRAM*\n\n")
 
 dataFile.write("*BEGINNING PROGRAM*\n\n")
 parser = argparse.ArgumentParser(description="Parse bool")
-parser.add_argument("-d", '-development', default=False, action="store_true")
+parser.add_argument("-D", '-development', default=False, action="store_true")
+parser.add_argument("-G", '-GUI', default=False, action="store_true")
+
 args = parser.parse_args()
 
-serOrFile = args.d
-Importer = Thread(target=importSerial, args=(serOrFile,))
-Importer.start()
+if args.D:
+    Fake = Thread(target=fakeserial, args=("NewHexFile_withtime.txt",))
+    Fake.start()
+else:
+    importer = Thread(target=importSerial)
+    importer.start()
 
-
-GUI = Thread(target=GUI_GO)
-GUI.start()
-
+if args.G:
+    print("OPENING GUI")
+    GUI = Thread(target=GUI_GO)
+    GUI.start()
 
 
 def main():
     state = "initial"
-    baro_state = "payloadLength"
+    baro_state = "payLoadLength"
     payLoadLenFlag = False
     payLoadLen = 0
     payLoadCount = 0
     dataCount = 0
     dataType_count = 1
-    convertingData = ""
     baroChecksumCount = 0
     data = []
     baroBytes = []
@@ -136,11 +191,15 @@ def main():
     gpsByte_string = ""
     baroChecksum = []
     GUI_iterater = 0
+    time_arg = 0
 
-    if args.d:
+    if args.D:
+        time_arg = 1
+
+    if args.G:
         print("*ENTERING DEVELOPMENT MODE*\n")
         dataFile.write("*ENTERING DEVELOPMENT MODE*\n")
-        #baroMsgsFile = open(baroMsgsFilePath, "r")
+        # baroMsgsFile = open(baroMsgsFilePath, "r")
         print("READING FROM FILE\n")
         dataFile.write("READING FROM FILE\n")
     else:
@@ -148,13 +207,17 @@ def main():
         print("READING FROM SERIAL\n")
         dataFile.write("READING FROM SERIAL\n")
 
+    start_gpx(gpsgpx)
+
+
     while True:
-        data_raw = ""
         data_raw = receiver.recv()
+        recv_timestamp = getTimeStamp(time_arg)
         if len(data_raw) == 2:
+            settings.msg_time = settings.fake_delta
             if data_raw == "BB" and state == "initial":  # First starting byte
-                print(getTimeStamp())
-                dataFile.write("\n" + getTimeStamp() + "\n")
+                print(recv_timestamp)
+                dataFile.write("\n" + recv_timestamp + "\n")
                 print("First FPROCK start flag received")
                 dataFile.write("First FPROCK start flag received\n")
                 state = "baroFirst"
@@ -180,30 +243,34 @@ def main():
             elif state == "baroClass":
                 if baro_state == "payload":
                     baroBytes.append(data_raw)
-                    convertingData = data_raw + convertingData
-                    dataCount = dataCount + 1
-                    if dataCount == 4:
-                        data.append(struct.unpack('!f', bytes.fromhex(convertingData))[0])
-                        dataType_count = dataType_count + 1
-                        dataCount = 0
-                        convertingData = ""
                     payLoadCount = payLoadCount + 1
                     if payLoadCount == payLoadLen:
                         print("PAYLOAD READ IN")
                         dataFile.write("END OF PAYLOAD\n")
-                        state = "barochecksum"
-                        baro_state = "payloadLength"
+                        baro_state = "barochecksum"
                         baroChecksumCount = 0
-                        payLoadCount = 0
                         payLoadLen = 0
                         payLoadCount = 0
-                        dataType_count = 1
-                elif baro_state == "payloadLength":
-                    payLoadLenFlag = True
+                elif baro_state == "payLoadLength":
                     payLoadLen = int(data_raw, 16)
                     print("Barometer payload length is " + str(payLoadLen) + " bytes")
                     dataFile.write("Barometer payload length is " + str(payLoadLen) + " bytes\n")
                     baro_state = "payload"
+                elif baro_state == "barochecksum":
+                    baroChecksumCount = baroChecksumCount + 1
+                    baroChecksum.append(data_raw)
+                    if baroChecksumCount == 2:
+                        if validateBaroChecksum(baroBytes, baroChecksum):
+                            BaroMessages.write(recv_timestamp.strip("Current Timestamp: ") + ',')
+                            baroAlt = decodeLogData(baroBytes)
+                        else:
+                            print("CHECKSUM INVALID IGNORING DATA")
+                        print("\n")
+                        state = "initial"
+                        data = []
+                        baroBytes = []
+                        baroChecksum = []
+                        baro_state = "payLoadLength"
             elif state == "messageClass":
                 if payLoadLenFlag:
                     # message data conversion
@@ -214,28 +281,10 @@ def main():
                         dataFile.write("END OF PAYLOAD\n")
                         payLoadCount = 0
                 else:
-                    payLoadLenFlag = True
                     payLoadLen = int(data_raw, 16)
                     print("Message payload length is " + str(payLoadLen) + " bytes")
                     dataFile.write("Message payload length is " + str(payLoadLen) + " bytes\n")
                     baroBytes.append(data_raw)
-            elif state == "barochecksum":
-                baroChecksumCount = baroChecksumCount + 1
-                baroChecksum.append(data_raw)
-                if baroChecksumCount == 2:
-                    if validateBaroChecksum(baroBytes, baroChecksum):
-                        for i in range(0, 7):
-                            logData(i, data, GUI_iterater)
-                    else:
-                        print("CHECKSUM INVALID IGNORING DATA")
-                    GUI_iterater += 1
-                    if GUI_iterater == 5:
-                        GUI_iterater = 0
-                    print("\n")
-                    state = "initial"
-                    data = []
-                    baroBytes = []
-                    baroChecksum = []
             elif state == "initial" and data_raw == "B5":
                 print("Intercepting GPS data")
                 gpsByte_string = gpsByte_string + data_raw
@@ -249,19 +298,32 @@ def main():
                 if i == 100:
                     state = "initial"
                     GPSdict = readUBX(gps_bytes)
-                    dataFile.write("\nGPS DATA:\n")
-                    GPSQueue.put(GPSdict)
-                    for key, value in GPSdict.items():
-                        print(key + ":", value)
-                        dataFile.write(str(key) + ": " + str(value) + "\n")
-                    print("\n")
+
+                    if len(GPSdict) != 0:
+                        dataFile.write("\nGPS DATA:\n")
+                        GPSQueue.put(GPSdict)
+                        for key, value in GPSdict.items():
+                            print(key + ":", value)
+                            dataFile.write(str(key) + ": " + str(value) + "\n")
+                            GPSMessages.write(str(value) + ",")
+                        GPSMessages.write('\n')
+                        print("\n")
+                        if int(GPSdict["Valid Date"]) & int(GPSdict["Valid Time"]):
+                            timestring = str(GPSdict["Year"]) + '-' + str(GPSdict["Month"]) + '-' + str(
+                                GPSdict["Day"]) + 'T' + \
+                                         str(GPSdict["Hour"]) + ':' + str(GPSdict["Minute"]) + ':' + str(
+                                GPSdict["Second"]) + 'Z'
+                            write_gpx(gpsgpx, format(GPSdict["Latitude"], '.6f'), format(GPSdict["Longitude"], '.6f'),
+                                      format(baroAlt, '.6f'), timestring)
+
                     gps_bytes = []
                     gpsByte_string = ""
             else:
                 print(
                     f"ERROR: missing starting flag, discarding incoming data({data_raw}) and waiting till next start flags")
                 dataFile.write(
-                    "ERROR: missing starting flag, discarding incoming data(" + str(data_raw) + ") and waiting till next start flags\n")
+                    "ERROR: missing starting flag, discarding incoming data(" + str(
+                        data_raw) + ") and waiting till next start flags\n")
         else:
             continue
 
@@ -269,14 +331,15 @@ def main():
 try:
     main()
 except KeyboardInterrupt:
-    Importer.join()
-    GUI.join()
-    rawPresFile.close()
-    compPresFile.close()
-    rawTempFile.close()
-    compTempFile.close()
-    rawHumFile.close()
-    compHumFile.close()
+    # Importer.join()
+    if args.D:
+        Fake.join()
+    if args.G:
+        GUI.join()
+    end_gpx(gpsgpx)
+    gpsgpx.close()
+
     dataFile.close()
+
 
     sys.exit(0)
