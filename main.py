@@ -164,7 +164,7 @@ parser.add_argument("-G", '-GUI', default=False, action="store_true")
 args = parser.parse_args()
 
 if args.D:
-    Fake = Thread(target=fakeserial, args=("HexFile_withtime.txt",))
+    Fake = Thread(target=fakeserial, args=("NewHexFile_withtime.txt",))
     Fake.start()
 else:
     importer = Thread(target=importSerial)
@@ -208,10 +208,7 @@ def main():
         dataFile.write("READING FROM SERIAL\n")
 
     start_gpx(gpsgpx)
-    # write_gpx(gpsgpx, 0.228990, 37.307772, 2004.94, "2007-01-01T00:00:26Z")
-    # write_gpx(gpsgpx, 0.241400, 37.317961, 3004.94, "2007-12-31T23:00:49Z")
-    # end_gpx(gpsgpx)
-    # gpsgpx.close()
+
 
     while True:
         data_raw = receiver.recv()
