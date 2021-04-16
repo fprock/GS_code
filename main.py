@@ -5,7 +5,7 @@ from threading import *
 from datetime import datetime
 from importer import *
 # from importer import receiver
-from GUI import GUI_GO, presQueue, tempQueue, humQueue, altQueue, GPSQueue
+from GUI import presQueue, tempQueue, humQueue, altQueue, GPSQueue, GUI_GO
 from readUBX import *
 import settings
 from fakeserial import *
@@ -325,6 +325,7 @@ def main():
                     "ERROR: missing starting flag, discarding incoming data(" + str(
                         data_raw) + ") and waiting till next start flags\n")
         else:
+
             continue
 
 
